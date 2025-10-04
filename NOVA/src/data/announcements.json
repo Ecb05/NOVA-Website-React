@@ -1,0 +1,36 @@
+{
+  "announcements": [
+    {
+      "title": "react",
+      "description": "xyz",
+      "icon": "fas fa-calendar-alt",
+      "date": {
+        "day": "13",
+        "month": "november"
+      },
+      "details": {
+        "location": "virtual",
+        "time": "7 to 9 "
+      },
+      "registrationLink": "youtube.com",
+      "isActive": true,
+      "id": 1759336803669
+    },
+    {
+      "id": "001",
+      "title": "NOVA Inaugural Event",
+      "description": "Join us for the launch event...",
+      "date": {
+        "day": "25th",
+        "month": "JUNE"
+      },
+      "details": {
+        "location": "Virtual Meeting",
+        "time": "7:00 PM - 9:00 PM"
+      },
+      "registrationLink": "https://forms.google.com/...",
+      "isActive": true,
+      "createdAt": "2025-01-15"
+    }
+  ]
+}
