@@ -2459,12 +2459,11 @@ footer::before {
     justify-content: center;
     padding: var(--container-padding);
     padding-top: 80px;
-    max-width: 1400px;
     margin: 0 auto;
     position: relative;
 }
 
-.novathon-hero::before {
+  .novathon-hero::before {
     content: '';
     position: absolute;
     top: 0;
@@ -2475,11 +2474,28 @@ footer::before {
         radial-gradient(circle at 30% 70%, rgba(138, 43, 226, 0.15), transparent 50%),
         radial-gradient(circle at 70% 30%, rgba(30, 144, 255, 0.15), transparent 50%);
     z-index: -1;
-}
-
-.event-status {
+  }
+ 
+ /* Mobile guard for Novathon hero content */
+ @media (max-width: 768px) {
+   .novathon-hero .hero-content {
+     min-width: 280px;
+     margin: 0 auto;
+   }
+   
+   .countdown-container {
+     flex-direction: column;
+     align-items: center;
+   }
+   
+   .countdown-item {
+     margin-bottom: 20px;
+   }
+ }
+  
+  .event-status {
     margin-top: 30px;
-}
+  }
 
 .status-badge {
     display: inline-flex;
@@ -3229,13 +3245,68 @@ footer::before {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
+/* Mobile optimizations for Novathon countdown */
+@media (max-width: 768px) {
+  /* Keep the container usable edge-to-edge */
+  .countdown-container {
+    max-width: 100%;
+    margin: 1rem auto;
+    padding: 1.25rem;
+    border-radius: 16px;
+  }
+
+  /* Allow wrapping instead of shrinking */
+  .countdown {
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Prevent complete shrink; keep touch-friendly size */
+  .countdown-item {
+    min-width: 110px;
+    padding: 1rem;
+    flex: 1 1 45%;
+  }
+
+  .countdown-number {
+    font-size: clamp(1.75rem, 6vw, 2.25rem);
+    margin-bottom: 0.25rem;
+  }
+
+  .countdown-label {
+    font-size: clamp(0.7rem, 2.5vw, 0.85rem);
+    letter-spacing: 0.5px;
+  }
+
+  /* Buttons more tappable, stack vertically */
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  .action-btn {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.9rem 1.25rem;
+  }
+}
+
+/* Ultra-small screens */
+@media (max-width: 420px) {
+  .countdown-item {
+    min-width: 135px;
+    flex: 1 1 100%;
+  }
+}
+
 .rules-link {
     position: absolute;
     top: 1rem;
     right: 1rem;
     padding: 0.5rem 1rem;
     background: rgba(255, 255, 255, 0.1);
-    border-radius: 50px;
     color: var(--text-color);
     text-decoration: none;
     transition: all 0.3s ease;
