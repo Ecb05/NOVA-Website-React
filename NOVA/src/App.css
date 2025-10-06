@@ -13,9 +13,19 @@
     --gradient-2: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
     --gradient-3: linear-gradient(135deg, var(--accent-color), var(--primary-color));
     
-    /* Spacing */
-    --section-padding: 100px 0;
-    --container-padding: 0 50px;
+    /* Fluid type scale */
+    --fs-xs: clamp(0.75rem, 0.68rem + 0.3vw, 0.875rem);
+    --fs-sm: clamp(0.875rem, 0.8rem + 0.4vw, 1rem);
+    --fs-md: clamp(1rem, 0.9rem + 0.6vw, 1.25rem);
+    --fs-lg: clamp(1.25rem, 1.1rem + 0.8vw, 1.75rem);
+    --fs-xl: clamp(1.75rem, 1.5rem + 1.5vw, 2.5rem);
+
+    /* Fluid spacing */
+    --section-padding: clamp(56px, 8vw, 100px) 0;
+    --container-padding: 0 clamp(16px, 5vw, 50px);
+
+    /* Example container width */
+    --container-max: 1200px;
 }
 #root {
     min-height: 100vh;
@@ -37,6 +47,80 @@ body {
     color: var(--light-text);
     overflow-x: hidden;
     position: relative;
+    font-size: var(--fs-md);
+}
+ 
+/* ===== Responsive Base & Helpers ===== */
+/* Layout container */
+.container {
+    width: 100%;
+    max-width: var(--container-max);
+    padding: var(--container-padding);
+    margin-inline: auto;
+}
+
+/* Sections */
+.section {
+    padding: var(--section-padding);
+}
+
+/* Responsive media */
+img, video, canvas, svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Flex/Grid helpers */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(12px, 2.5vw, 24px);
+}
+.col {
+    flex: 1 1 300px; /* grows, shrinks, min width */
+    min-width: 0;    /* avoids overflow on long words */
+}
+
+/* Adaptive grid */
+.grid {
+    display: grid;
+    gap: clamp(12px, 2.5vw, 24px);
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+/* Typography scale */
+h1 { font-size: var(--fs-xl); line-height: 1.15; }
+h2 { font-size: var(--fs-lg); line-height: 1.2; }
+p  { font-size: var(--fs-md); line-height: 1.6; }
+
+/* Buttons/controls scale */
+button, .btn { font-size: var(--fs-sm); padding: 0.6em 1em; }
+
+/* Utilities */
+.hidden-mobile { display: none; }
+@media (min-width: 768px) {
+  .hidden-mobile { display: revert; }
+  .hidden-desktop { display: none; }
+}
+
+/* Breakpoints for finer control */
+@media (max-width: 1200px) {
+  :root { --container-max: 1100px; }
+}
+@media (max-width: 992px) {
+  /* Adjust nav spacing, card sizes, etc. */
+}
+@media (max-width: 768px) {
+  /* Stack hero content, reduce paddings */
+}
+@media (max-width: 576px) {
+  :root { --container-padding: 0 16px; }
+  h1 { font-size: clamp(1.5rem, 6vw, 2rem); }
+}
+
+/* Motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 
 /* Custom Scrollbar */
@@ -259,6 +343,55 @@ header {
     background-color: var(--light-text);
 }
 
+/* ===== NAVBAR: Mobile behavior ===== */
+@media (max-width: 768px) {
+  /* Show hamburger on mobile */
+  .hamburger { display: block; z-index: 1001; }
+
+  /* Turn horizontal links into a sliding panel */
+  .nav-links {
+    position: fixed;
+    top: 64px; /* header height approx */
+    left: 0;
+    right: 0;
+    background: rgba(10, 10, 10, 0.9);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .nav-links ul {
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 24px;
+    gap: 8px;
+  }
+
+  .nav-links ul li { margin: 0; }
+
+  .nav-links.active { max-height: 70vh; }
+
+  /* Make register button full-width-ish on mobile */
+  .nav-links .register-btn {
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+  }
+
+  /* Animate hamburger into X when menu is open */
+  .nav-links.active ~ .hamburger .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+  .nav-links.active ~ .hamburger .bar:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-links.active ~ .hamburger .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+}
+
 /* ===== HERO SECTION ===== */
 .hero {
     height: 100vh;
@@ -350,7 +483,7 @@ header {
     position: relative;
     border-radius: 15px;
     overflow: hidden;
-    height: 120px;
+    height: clamp(140px, 24vw, 220px);
 }
 
 .vision-banner img {
@@ -389,9 +522,11 @@ header {
     max-width: 1400px;
     margin: 0 auto;
     /*padding: var(--container-padding);*/
-    padding-left: 350px;
+    padding: var(--container-padding);
     position: relative;
     z-index: 1;
+    justify-items: center;   /* center items within their grid area */
+    justify-content: center; /* center the grid if extra space */
 }
 
 .vision-card {
@@ -405,9 +540,11 @@ header {
     display: flex;
     flex-direction: column;
     height: 100%;
-    width: 700px;
+    width: auto;
+    max-width: 700px;
     justify-content: center;
     align-items: center;
+    justify-self: center; /* center within grid track on desktop */
 }
 
 .vision-card:hover {
@@ -455,6 +592,34 @@ header {
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
     text-align: justify;
+}
+
+/* Vision: mobile tweaks */
+@media (max-width: 768px) {
+  .vision {
+    padding: var(--section-padding);
+  }
+  .vision-banner {
+    margin: 0 auto 24px;
+  }
+  .vision-overlay h3 {
+    font-size: clamp(1rem, 4.5vw, 1.25rem);
+    padding: 0 12px;
+  }
+  .vision-container {
+    gap: clamp(12px, 3.5vw, 20px);
+  }
+  .vision-card {
+    padding: 24px 20px;
+    width: 100%; /* fill on mobile */
+  }
+  .vision-card h3 {
+    font-size: clamp(1.25rem, 5vw, 1.5rem);
+  }
+  .vision-card p {
+    font-size: clamp(0.95rem, 3.5vw, 1.05rem);
+    text-align: left;
+  }
 }
 
 /* Removed vision-image styles */

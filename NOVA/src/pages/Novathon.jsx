@@ -9,18 +9,12 @@ const Novathon = () => {
 
   return (
     <>
-     <br />
-      <br />
-      <br />
       <CountdownSection 
         onOpenRegistration={() => {
          
           setShowRegistration(true)}}
         onOpenSubmission={() => setShowSubmission(true)}
       />
-      <br />
-      <br />
-      <br />
       <RegistrationModal 
         isOpen={showRegistration} 
         onClose={() => setShowRegistration(false)} 
