@@ -11,6 +11,7 @@ const app = express();
 
 // Middleware
 app.use(cors({ // Adjust this to your frontend's URL
+  origin: 'https://nova-wx5f.onrender.com/'
 }));
 app.use(express.json());
 
