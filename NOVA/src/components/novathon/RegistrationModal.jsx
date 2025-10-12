@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRegistrationForm } from '../../hooks/useRegistrationForm';
 
 const RegistrationModal = ({ isOpen, onClose }) => {
@@ -11,6 +11,15 @@ const RegistrationModal = ({ isOpen, onClose }) => {
     participant2Name: '',
     participant3Name: ''
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('modal-open');
+    }
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
