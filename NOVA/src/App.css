@@ -230,11 +230,19 @@ header {
 
 .navbar {
     display: flex;
+    position:fixed;
     justify-content: space-between;
     align-items: center;
     padding: var(--container-padding);
     width: 100%;
     margin: 0 auto;
+    z-index: 10000;
+      background: rgba(138, 43, 226, 0.1);
+  backdrop-filter: blur(15px) brightness(0.8);
+  -webkit-backdrop-filter: blur(15px) brightness(0.8);
+  
+  
+  box-shadow: 0 4px 20px rgba(138, 43, 226, 0.2);
   
 }
 
@@ -346,7 +354,7 @@ header {
 /* ===== NAVBAR: Mobile behavior ===== */
 @media (max-width: 768px) {
   /* Show hamburger on mobile */
-  .hamburger { display: block; z-index: 1001; }
+  .hamburger { display: block; z-index: 10001; }
 
   /* Turn horizontal links into a sliding panel */
   .nav-links {
@@ -367,6 +375,7 @@ header {
     align-items: center;
     padding: 16px 24px;
     gap: 8px;
+    z-index: 10000;
   }
 
   .nav-links ul li { margin: 0; }

@@ -10,7 +10,7 @@ const AboutSection = () => {
       <div className="about-container">
         <div className="about-image" data-aos="fade-right">
           <img 
-            src="images/hero/NOVA LOGo.jpg" 
+            src="/images/hero/NOVA LOGo.jpg" 
             alt="About NOVA" 
             height="600"
           />

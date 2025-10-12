@@ -18,18 +18,12 @@ const Navbar = () => {
     return location.pathname === path;
   };
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    closeMenu();
-  };
+ 
 
   return (
     <nav className="navbar">
       <div className="logo">
-        <img src="images/hero/NOVA LOGo.jpg" alt="NOVA Logo" className="logo-image" />
+        <img src="/images/hero/NOVA LOGo.jpg" alt="NOVA Logo" className="logo-image" />
         <div className="logo-text">
           <h1>NOVA</h1>
           <span className="tagline">Network of Visionary Aspirants</span>
