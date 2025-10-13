@@ -18,4 +18,17 @@ export default defineConfig({
         target: 'http://localhost:3001'
       }
   }
-}})
+
+},
+   build: {
+    outDir: 'dist',
+    sourcemap: false, // Disable in production for smaller bundle
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
+    },
+  }
+})

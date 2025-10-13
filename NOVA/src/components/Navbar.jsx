@@ -18,18 +18,12 @@ const Navbar = () => {
     return location.pathname === path;
   };
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    closeMenu();
-  };
+ 
 
   return (
     <nav className="navbar">
       <div className="logo">
-        <img src="images/hero/NOVA LOGo.jpg" alt="NOVA Logo" className="logo-image" />
+        <img src="/images/hero/NOVA LOGo.jpg" alt="NOVA Logo" className="logo-image" />
         <div className="logo-text">
           <h1>NOVA</h1>
           <span className="tagline">Network of Visionary Aspirants</span>
@@ -61,11 +55,11 @@ const Navbar = () => {
           </li>
           <li>
             <Link 
-              to="/roadmaps" 
-              className={isActiveLink('/roadmaps') ? 'active' : ''}
+              to="/sprints" 
+              className={isActiveLink('/sprints') ? 'active' : ''}
               onClick={closeMenu}
             >
-              Roadmaps
+              Sprints
             </Link>
           </li>
           <li>
@@ -77,15 +71,7 @@ const Navbar = () => {
               Novathon
             </Link>
           </li>
-          <li>
-            <Link 
-              to="/rules" 
-              className={isActiveLink('/rules') ? 'active' : ''}
-              onClick={closeMenu}
-            >
-              Rules
-            </Link>
-          </li>
+         
           <li>
             <Link 
               to="/register" 

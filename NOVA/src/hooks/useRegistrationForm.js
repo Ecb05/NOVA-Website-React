@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
-export const useRegistrationForm = (apiEndpoint = '/api/register') => {
+// Use environment variable for API base URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+export const useRegistrationForm = (apiEndpoint = `${API_BASE_URL}/api/register`) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [errors, setErrors] = useState({});
@@ -82,32 +85,19 @@ export const useRegistrationForm = (apiEndpoint = '/api/register') => {
       
       if (error.name === 'AbortError') {
         errorMessage = 'Request timed out. Please try again.';
-      } else if (error.message.includes('Failed to fetch')) {
-        errorMessage = 'Cannot connect to server';
-      } else {
+      } else if (error.message) {
         errorMessage = error.message;
       }
 
-      setMessage({ text: errorMessage, type: 'error' });
+      setMessage({ 
+        text: errorMessage, 
+        type: 'error' 
+      });
       return { success: false };
     } finally {
       setLoading(false);
     }
   };
 
-  const clearError = (fieldName) => {
-    setErrors(prev => {
-      const newErrors = { ...prev };
-      delete newErrors[fieldName];
-      return newErrors;
-    });
-  };
-
-  return {
-    submitRegistration,
-    loading,
-    message,
-    errors,
-    clearError
-  };
+  return { submitRegistration, loading, message, errors };
 };

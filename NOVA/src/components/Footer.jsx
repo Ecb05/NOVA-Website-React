@@ -13,7 +13,7 @@ const Footer = () => {
     <footer>
       <div className="footer-container">
         <div className="footer-logo">
-          <img src="images/hero/NOVA LOGo.jpg" alt="NOVA Logo" className="footer-logo-image" />
+          <img src="/images/hero/NOVA LOGo.jpg" alt="NOVA Logo" className="footer-logo-image" />
           <div>
             <h2>NOVA</h2>
             <p>Network of Visionary Aspirants</p>

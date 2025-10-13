@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import CountdownSection from '../components/novathon/CountdownSection';
 import RegistrationModal from '../components/novathon/RegistrationModal';
 import SubmissionModal from '../components/novathon/SubmissionModal';
+import RulesSection from '../components/sections/RulesSection';
 
 const Novathon = () => {
   const [showRegistration, setShowRegistration] = useState(false);
@@ -24,7 +25,7 @@ const Novathon = () => {
         onClose={() => setShowSubmission(false)} 
       />
       
-     
+     <RulesSection />
     </>
   );
 };

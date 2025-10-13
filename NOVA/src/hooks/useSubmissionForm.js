@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
-export const useSubmissionForm = (apiEndpoint = '/api/submit') => {
+// Use environment variable for API base URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+export const useSubmissionForm = (apiEndpoint = `${API_BASE_URL}/api/submit`) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
 
