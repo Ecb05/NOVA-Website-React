@@ -55,11 +55,11 @@ const Navbar = () => {
           </li>
           <li>
             <Link 
-              to="/roadmaps" 
-              className={isActiveLink('/roadmaps') ? 'active' : ''}
+              to="/sprints" 
+              className={isActiveLink('/sprints') ? 'active' : ''}
               onClick={closeMenu}
             >
-              Roadmaps
+              Sprints
             </Link>
           </li>
           <li>
@@ -71,15 +71,7 @@ const Navbar = () => {
               Novathon
             </Link>
           </li>
-          <li>
-            <Link 
-              to="/rules" 
-              className={isActiveLink('/rules') ? 'active' : ''}
-              onClick={closeMenu}
-            >
-              Rules
-            </Link>
-          </li>
+         
           <li>
             <Link 
               to="/register" 

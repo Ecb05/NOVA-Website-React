@@ -13,6 +13,11 @@ import crypto from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+// Initialize Notion client
+const notion = new Client({
+  auth: process.env.NOTION_API_KEY,
+ 
+});
 
 const app = express();
 
@@ -34,10 +39,7 @@ app.use(cors({
   credentials: true
 }));
 
-// Initialize Notion client
-const notion = new Client({
-  auth: process.env.NOTION_API_KEY,
-});
+
 
 app.use(express.json());
 
@@ -275,104 +277,71 @@ app.post('/api/register', async (req, res) => {
 /**
  * Project submission endpoint with email notification
  */
+
+
 app.post('/api/submit', async (req, res) => {
-  console.log('Submission request received:', req.body);
-  
   try {
     const { submissionTeamId, projectUrl } = req.body;
-    
-    if (!submissionTeamId || !projectUrl) {
-      return res.status(400).json({
-        success: false,
-        message: 'Team ID and project URL are required'
-      });
-    }
 
-    // Query Notion database to verify team registration
-    const response = await notion.databases.query({
-      database_id: process.env.NOTION_DATABASE_ID,
-      filter: {
-        and: [
-          {
-            property: 'Team ID',
-            rich_text: {
-              contains: submissionTeamId
+    // Step 1: Get the database to find data source ID
+    const database = await notion.databases.retrieve({
+      database_id: process.env.NOTION_DATABASE_ID
+    });
+
+    // Get the first data source ID
+    const dataSourceId = database.data_sources[0].id;
+
+    // Step 2: Query the data source using notion.request
+    const response = await notion.request({
+      path: `data_sources/${dataSourceId}/query`,
+      method: 'POST',
+      body: {
+        filter: {
+          and: [
+            {
+              property: 'Team ID',
+              rich_text: {
+                equals: submissionTeamId  // Make sure this is just the value, not nested
+              }
+            },
+            {
+              property: 'Status',
+              select: {
+                equals: 'Active'
+              }
             }
-          },
-          {
-            property: 'Status',
-            select: {
-              equals: 'Active'
-            }
-          }
-        ]
+          ]
+        }
       }
     });
 
-    // Check if team exists and is active
     if (response.results.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Invalid team ID or team is not active. Please check your Team ID.'
+        message: 'Team not found or not active'
       });
     }
+      const submissionDate = new Date().toISOString();
 
-    const teamPage = response.results[0];
-
-    // Check if project is already submitted
-    if (teamPage.properties['Project URL'] && teamPage.properties['Project URL'].url) {
-      return res.status(400).json({
-        success: false,
-        message: 'Project already submitted for this team. Contact support if you need to update your submission.'
-      });
-    }
-    
-    // Get team details for email
-    const teamName = teamPage.properties['Team Name'].title[0]?.text?.content;
-    const teamLeaderEmail = teamPage.properties['Team Leader Email'].email;
-    
-    // Update the team's record in Notion with project submission
     await notion.pages.update({
-      page_id: teamPage.id,
+      page_id: response.results[0].id,
       properties: {
         'Project URL': {
           url: projectUrl
         },
-        'Submission Date': {
+         'Submission Date': {  // Change this to your actual column name
           date: {
-            start: new Date().toISOString()
+            start: submissionDate
           }
         }
       }
     });
-    
-    console.log('Project submission recorded in Notion');
-    
-    // Send submission confirmation email
-    try {
-      await emailService.sendSubmissionEmail({
-        teamName: teamName,
-        email: teamLeaderEmail,
-        teamId: submissionTeamId,
-        projectUrl: projectUrl
-      });
-      console.log('Submission confirmation email sent successfully');
-    } catch (emailError) {
-      console.error('Error sending submission email:', emailError);
-      // Don't fail the submission if email fails
-    }
-    
-    res.status(200).json({
-      success: true,
-      message: 'Project submitted successfully! You will receive a confirmation email shortly.'
-    });
-    
+
+    res.json({ success: true, message: 'Project submitted successfully!' });
+
   } catch (error) {
-    console.error('Error submitting project:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to submit project: ' + error.message
-    });
+    console.error('Full error:', error);
+    res.status(500).json({ success: false, message: error.message });
   }
 });
 

@@ -8,10 +8,11 @@ import AdminPanel from './admin/AdminPanel';
 import Announcements from './pages/Announcements';
 import Novathon from './pages/Novathon';
 import Register from './pages/Register';
+import Sprints from './pages/Sprints';
 // Temporary placeholder components (you'll create these later)
 
 
-const Roadmaps = () => <div>Roadmaps Page</div>;
+
 
 const Rules = () => <div>Rules Page</div>;
 
@@ -30,7 +31,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/announcements" element={<Announcements />} />
-            <Route path="/roadmaps" element={<Roadmaps />} />
+            <Route path="/sprints" element={<Sprints />} />
             <Route path="/novathon" element={<Novathon />} />
             <Route path="/rules" element={<Rules />} />
             <Route path="/register" element={<Register />} />
