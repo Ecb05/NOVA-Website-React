@@ -7,13 +7,14 @@ import Home from './pages/Home';
 import AdminPanel from './admin/AdminPanel';
 import Announcements from './pages/Announcements';
 import Novathon from './pages/Novathon';
+import Register from './pages/Register';
 // Temporary placeholder components (you'll create these later)
 
 
 const Roadmaps = () => <div>Roadmaps Page</div>;
 
 const Rules = () => <div>Rules Page</div>;
-const Register = () => <div>Register Page</div>;
+
 
 function App() {
   return (

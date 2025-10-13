@@ -1,0 +1,20 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "NOVA website backend",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^5.1.0",
+    "@sendgrid/mail": "^8.1.6",
+    "crypto": "^1.0.1",
+    "express-rate-limit": "^8.1.0",
+    "node-cron": "^4.2.1"
+  }
+}

@@ -1500,7 +1500,7 @@ header {
     width: 100%;
     height: 100%;
     z-index: 0;
-    opacity: 0.2;
+    opacity: -1;
 }
 
 .register-background img {
@@ -1671,7 +1671,12 @@ header {
 }
 
 .form-group input:focus,
-.form-group select:focus,
+.form-group select:focus {
+    background-color: black;
+    color: white; /* Makes text visible on black background */
+    outline: none; /* Optional: removes default outline */
+   /* Optional: change border color */
+}
 .form-group textarea:focus {
     outline: none;
     border-color: var(--primary-color);
