@@ -3,6 +3,7 @@ import CountdownSection from '../components/novathon/CountdownSection';
 import RegistrationModal from '../components/novathon/RegistrationModal';
 import SubmissionModal from '../components/novathon/SubmissionModal';
 import RulesSection from '../components/sections/RulesSection';
+import VibeathonHeroSection from '../components/sections/VibeathonHeroSection';
 
 const Novathon = () => {
   const [showRegistration, setShowRegistration] = useState(false);
@@ -10,6 +11,7 @@ const Novathon = () => {
 
   return (
     <>
+      <VibeathonHeroSection />
       <CountdownSection 
         onOpenRegistration={() => {
          
