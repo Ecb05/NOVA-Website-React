@@ -5,7 +5,7 @@ const VibeathonHeroSection = () => {
   return (
     <section className="vibe-hero">
       <div className="vibe-hero-content">
-        <h1><span className="highlight">Vibeathon</span></h1>
+        <h1><span className="highlight">Novathon</span></h1>
         <h2>The Online AI Hackathon for Students</h2>
         <p>Get ready to solve exciting problem statements using any AI tools of your choice, all from the comfort of your home!</p>
         <div className="vibe-hero-buttons">

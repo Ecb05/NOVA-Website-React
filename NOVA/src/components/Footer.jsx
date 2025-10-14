@@ -35,17 +35,11 @@ const Footer = () => {
             <a href="https://www.instagram.com/nova.mvsr/" className="social-icon" aria-label="Instagram">
               <i className="fab fa-instagram"></i>
             </a>
-            <a href="#" className="social-icon" aria-label="LinkedIn">
+            <a href="https://www.linkedin.com/in/nova-mvsr-732bb2386" className="social-icon" aria-label="LinkedIn">
               <i className="fab fa-linkedin"></i>
             </a>
-            <a href="#" className="social-icon" aria-label="Twitter">
-              <i className="fab fa-twitter"></i>
-            </a>
-            <a href="#" className="social-icon" aria-label="GitHub">
+            <a href="https://github.com/Ecb05/NOVA-Website-React" className="social-icon" aria-label="GitHub">
               <i className="fab fa-github"></i>
-            </a>
-            <a href="#" className="social-icon" aria-label="Discord">
-              <i className="fab fa-discord"></i>
             </a>
           </div>
         </div>
