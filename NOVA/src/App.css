@@ -3209,12 +3209,11 @@ footer::before {
     color: var(--primary-color);
 }
 
-.countdown-container h2 .highlight{
-    background: linear-gradient(90deg, #ff6ec4, #7873f5);
+.countdown-container h2 .highlight {
+    background: linear-gradient(to right, #ff6ec4, #7873f5);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    padding-bottom: 70px;
-    font-size: 60px;
+    font-size: 70px;
 }
 
 .countdown {
@@ -3222,6 +3221,7 @@ footer::before {
     justify-content: center;
     gap: 2rem;
     margin-bottom: 3rem;
+    margin-top: 50px;
 }
 
 .countdown-item {
@@ -3257,6 +3257,8 @@ footer::before {
     font-size: 1.1rem;
     border: none;
     border-radius: 50px;
+    border: none;
+    cursor: pointer;
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 1px;
