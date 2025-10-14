@@ -26,13 +26,13 @@ const Footer = () => {
           <h3>Contact Us</h3>
           <p><i className="fas fa-envelope"></i> info@novaclub.org</p>
           <p><i className="fas fa-phone"></i> +91 9876543210</p>
-          <p><i className="fas fa-map-marker-alt"></i> CSE Department, University Campus</p>
+          <p><i className="fas fa-map-marker-alt"></i> CSE Department, MVSR Engineering College</p>
         </div>
         
         <div className="footer-social">
           <h3>Follow Us</h3>
           <div className="social-icons">
-            <a href="#" className="social-icon" aria-label="Instagram">
+            <a href="https://www.instagram.com/nova.mvsr/" className="social-icon" aria-label="Instagram">
               <i className="fab fa-instagram"></i>
             </a>
             <a href="#" className="social-icon" aria-label="LinkedIn">
