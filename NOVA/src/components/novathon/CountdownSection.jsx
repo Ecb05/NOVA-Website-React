@@ -10,7 +10,7 @@ const CountdownSection = ({ onOpenRegistration, onOpenSubmission }) => {
 
   useEffect(() => {
     // Set your event date here
-    const targetDate = new Date('2025-12-31T00:00:00').getTime();
+    const targetDate = new Date('2025-10-25T00:00:00').getTime();
 
     const interval = setInterval(() => {
       const now = new Date().getTime();
@@ -37,7 +37,7 @@ const CountdownSection = ({ onOpenRegistration, onOpenSubmission }) => {
     <section className="countdown-section">
       <div className="container">
         <div className="countdown-container" data-aos="fade-up">
-          <h2 className="countdown-title">Novathon 2024</h2>
+          <h2><span className="highlight">Novathon 2025</span></h2>
           <div className="countdown">
             <div className="countdown-item" data-aos="fade-up" data-aos-delay="100">
               <div className="countdown-number">

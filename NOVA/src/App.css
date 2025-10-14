@@ -3209,6 +3209,14 @@ footer::before {
     color: var(--primary-color);
 }
 
+.countdown-container h2 .highlight{
+    background: linear-gradient(90deg, #ff6ec4, #7873f5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding-bottom: 70px;
+    font-size: 60px;
+}
+
 .countdown {
     display: flex;
     justify-content: center;
@@ -3221,6 +3229,7 @@ footer::before {
     padding: 2rem;
     border-radius: 15px;
     min-width: 120px;
+    margin-top: 50px;
 }
 
 .countdown-number {
@@ -3246,6 +3255,7 @@ footer::before {
 .action-btn {
     padding: 1rem 2.5rem;
     font-size: 1.1rem;
+    border: none;
     border-radius: 50px;
     transition: all 0.3s ease;
     text-transform: uppercase;
@@ -3253,13 +3263,14 @@ footer::before {
 }
 
 .submit-btn {
-    background: var(--primary-color);
+    background:linear-gradient(90deg, #271b5a, #168ba8);
+    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
     color: white;
 }
 
 .register-btn {
-    background: transparent;
-    border: 2px solid var(--primary-color);
+    background: linear-gradient(90deg, #271b5a, #cc6607);
+    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
     color: var(--primary-color);
 }
 
@@ -3287,6 +3298,7 @@ footer::before {
 
   /* Prevent complete shrink; keep touch-friendly size */
   .countdown-item {
+   /* color: linear-gradient(90deg, #ff6ec4, #7873f5);*/
     min-width: 110px;
     padding: 1rem;
     flex: 1 1 45%;
@@ -3554,6 +3566,8 @@ body.modal-open {
 .back-btn:hover {
     transform: translateX(-5px);
 }
+
+
 .vibe-hero{
     display: flex;
     align-items: center;
@@ -3572,7 +3586,7 @@ body.modal-open {
 
 .vibe-hero-content h1 {
   align-items: center;
-  font-size: 5.5rem;
+  font-size: 5.2rem;
   margin-bottom: 20px;
 }
 
@@ -3611,7 +3625,7 @@ body.modal-open {
 }
 
 .vibe-btn.primary-btn {
-  background: linear-gradient(90deg, #271b5a, #168ba8); ;;
+  background: linear-gradient(90deg, #271b5a, #168ba8);
   color: #fff;
 }
 
@@ -3641,7 +3655,7 @@ body.modal-open {
   50% { transform: translateY(-20px); }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 780px) {
   .vibe-hero {
     flex-direction: column-reverse;
     text-align: center;

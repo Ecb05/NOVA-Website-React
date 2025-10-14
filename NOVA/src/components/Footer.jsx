@@ -26,26 +26,20 @@ const Footer = () => {
           <h3>Contact Us</h3>
           <p><i className="fas fa-envelope"></i> info@novaclub.org</p>
           <p><i className="fas fa-phone"></i> +91 9876543210</p>
-          <p><i className="fas fa-map-marker-alt"></i> CSE Department, University Campus</p>
+          <p><i className="fas fa-map-marker-alt"></i> CSE Department, MVSREC</p>
         </div>
         
         <div className="footer-social">
           <h3>Follow Us</h3>
           <div className="social-icons">
-            <a href="#" className="social-icon" aria-label="Instagram">
+            <a href="https://www.instagram.com/nova.mvsr?igsh=ejdvdzBjc2F0aHZk&utm_source=qr" className="social-icon" aria-label="Instagram">
               <i className="fab fa-instagram"></i>
             </a>
-            <a href="#" className="social-icon" aria-label="LinkedIn">
+            <a href="https://www.linkedin.com/in/nova-mvsr-732bb2386" className="social-icon" aria-label="LinkedIn">
               <i className="fab fa-linkedin"></i>
             </a>
-            <a href="#" className="social-icon" aria-label="Twitter">
-              <i className="fab fa-twitter"></i>
-            </a>
-            <a href="#" className="social-icon" aria-label="GitHub">
+            <a href="https://github.com/Ecb05/NOVA-Website-React" className="social-icon" aria-label="GitHub">
               <i className="fab fa-github"></i>
-            </a>
-            <a href="#" className="social-icon" aria-label="Discord">
-              <i className="fab fa-discord"></i>
             </a>
           </div>
         </div>
