@@ -33,8 +33,10 @@ app.use(cors({
     'http://127.0.0.1:5173'] 
     : [
         process.env.FRONTEND_URL,
-        'https://your-frontend-url.railway.app',
-        'http://localhost:4173' // Update with your actual Railway frontend URL
+       'https://thenova.club',                      // ✅ Your custom domain
+        'https://www.thenova.club',                  // ✅ With www (if configured)
+        'https://nova-website-react-1.vercel.app',   // ✅ Your Vercel URL
+        'https://nova-website-react-1-*.vercel.app'  // ✅ Preview deployments
       ],
   credentials: true
 }));
