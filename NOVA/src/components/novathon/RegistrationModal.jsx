@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRegistrationForm } from '../../hooks/useRegistrationForm';
+import CopyButton from './CopyButton';
 
 const RegistrationModal = ({ isOpen, onClose }) => {
   const { submitRegistration, loading, message, errors, clearError } = useRegistrationForm();
@@ -79,14 +80,17 @@ const RegistrationModal = ({ isOpen, onClose }) => {
               <h3>Your Team ID</h3>
               <div className="team-id-box">
                 <span className="team-id-text">{teamId}</span>
+                <CopyButton code={teamId} />
               </div>
               <p>Please save this Team ID for future reference. We'll also send it to your team leader email.</p>
-              <button 
-                className="close-team-id-popup"
-                onClick={handleCloseTeamIdPopup}
-              >
-                Got it!
-              </button>
+              <div className="team-id-buttons">
+                <button 
+                  className="close-team-id-popup"
+                  onClick={handleCloseTeamIdPopup}
+                >
+                  Got it!
+                </button>
+              </div>
             </div>
           </>
         ) : (
