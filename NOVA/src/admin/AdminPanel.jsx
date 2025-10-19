@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+
 const AdminPanel = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [password, setPassword] = useState('');
@@ -30,13 +31,28 @@ const AdminPanel = () => {
     }
   }, []);
 
-  const authenticate = () => {
-    if (password === 'nova-admin-2025') { // Change this password!
-      setIsAuthenticated(true);
-      localStorage.setItem('adminAuth', 'true');
-      loadAnnouncements();
-    } else {
-      alert('Incorrect password');
+ const authenticate = async () => {
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ password })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsAuthenticated(true);
+        localStorage.setItem('adminAuth', 'true');
+        loadAnnouncements();
+      } else {
+        alert('Incorrect password');
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      alert('Authentication failed');
     }
   };
 

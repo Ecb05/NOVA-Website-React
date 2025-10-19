@@ -38,7 +38,7 @@ export const useRegistrationForm = (apiEndpoint = `${API_BASE_URL}/api/register`
 
   const submitRegistration = async (formData) => {
     if (!validateForm(formData)) {
-      return { success: false };
+      return { success: false, teamId: null };
     }
 
     setLoading(true);
@@ -76,7 +76,7 @@ export const useRegistrationForm = (apiEndpoint = `${API_BASE_URL}/api/register`
           text: "Registration successful! We'll contact you soon.", 
           type: 'success' 
         });
-        return { success: true };
+        return { success: true, teamId: result.teamId };
       } else {
         throw new Error(result.message || 'Registration failed');
       }
@@ -93,7 +93,7 @@ export const useRegistrationForm = (apiEndpoint = `${API_BASE_URL}/api/register`
         text: errorMessage, 
         type: 'error' 
       });
-      return { success: false };
+      return { success: false, teamId: null };
     } finally {
       setLoading(false);
     }
