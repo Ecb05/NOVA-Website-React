@@ -540,7 +540,18 @@ if (!fs.existsSync(announcementsPath)) {
   const initialData = { announcements: [] };
   fs.writeFileSync(announcementsPath, JSON.stringify(initialData, null, 2));
 }
-
+//=============================================
+// Authentication endpoint
+//=============================================
+app.post('/api/admin/login', (req, res) => {
+  const { password } = req.body;
+  
+  if (password === process.env.ADMIN_PASSWORD) {
+    res.json({ success: true });
+  } else {
+    res.status(401).json({ success: false, error: 'Incorrect password' });
+  }
+});
 // ============================================
 // ANNOUNCEMENTS ENDPOINTS
 // ============================================
@@ -570,6 +581,30 @@ app.post('/api/announcements', (req, res) => {
   } catch (error) {
     console.error('POST Error:', error);
     res.status(500).json({ error: 'Failed to add announcement' });
+  }
+});
+// Delete announcement
+app.delete('/api/announcements/:id', (req, res) => {
+  try {
+    const announcementId = parseInt(req.params.id);
+    const data = JSON.parse(fs.readFileSync(announcementsPath, 'utf-8'));
+    
+    // Filter out the announcement with the matching id
+    const originalLength = data.announcements.length;
+    data.announcements = data.announcements.filter(
+      announcement => announcement.id !== announcementId
+    );
+    
+    // Check if an announcement was actually deleted
+    if (data.announcements.length === originalLength) {
+      return res.status(404).json({ error: 'Announcement not found' });
+    }
+    
+    fs.writeFileSync(announcementsPath, JSON.stringify(data, null, 2));
+    res.json({ success: true, message: 'Announcement deleted successfully' });
+  } catch (error) {
+    console.error('DELETE Error:', error);
+    res.status(500).json({ error: 'Failed to delete announcement' });
   }
 });
 

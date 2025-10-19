@@ -53,6 +53,9 @@ export const useSubmissionForm = (apiEndpoint = `${API_BASE_URL}/api/submit`) =>
           text: result.message || 'Project submitted successfully!', 
           type: 'success' 
         });
+        setTimeout(() => {
+    setMessage({ text: '', type: '' });
+  }, 3000);
         return { success: true };
       } else {
         throw new Error(result.message || 'Failed to submit project');
