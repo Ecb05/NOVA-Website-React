@@ -1,8 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+
 import dotenv from 'dotenv';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
@@ -56,8 +54,8 @@ const uploadToCloudinary = (buffer) => {
   });
 };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
+
 // Initialize Notion client
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
@@ -116,23 +114,8 @@ const limiter = rateLimit({
 app.use('/api/register', limiter);
 app.use('/api/submit', limiter);
 
-// Define data file paths
-const dataDir = isDevelopment 
-  ? path.join(__dirname, '../public/data')
-  : path.join(__dirname, '../data');
 
-const announcementsPath = path.join(dataDir, 'announcements.json');
 
-// Ensure data directory exists
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-}
-
-// Initialize announcements file if it doesn't exist
-if (!fs.existsSync(announcementsPath)) {
-  const initialData = { announcements: [] };
-  fs.writeFileSync(announcementsPath, JSON.stringify(initialData, null, 2));
-}
 //=============================================
 // Authentication endpoint
 //=============================================
@@ -1032,7 +1015,7 @@ app.listen(PORT, () => {
   console.log('='.repeat(50));
   console.log(`✅ Server running on port ${PORT}`);
   console.log(`✅ Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`✅ Data directory: ${dataDir}`);
+  //console.log(`✅ Data directory: ${dataDir}`);
   console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
   console.log(`✅ Test endpoint: http://localhost:${PORT}/api/test`);
   console.log(`📝 Notion database: ${process.env.NOTION_DATABASE_ID ? 'Configured' : 'NOT CONFIGURED'}`);
