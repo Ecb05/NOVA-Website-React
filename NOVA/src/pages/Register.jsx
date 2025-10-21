@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -17,7 +16,6 @@ const Register = () => {
 
   useEffect(() => {
     // Initialize AOS if you're using it in your project
-    // Make sure to install: npm install aos
     if (window.AOS) {
       window.AOS.init({
         duration: 1000,
@@ -83,8 +81,6 @@ const Register = () => {
 
   return (
     <section className="register-page">
-    
-
       <div className="register-container">
         <div className="register-content" data-aos="fade-right">
           <h3>Become a Member</h3>
@@ -122,7 +118,6 @@ const Register = () => {
               Opportunity to work on real-world projects
             </li>
           </ul>
-
         </div>
 
         <div className="register-form" data-aos="fade-left">
@@ -149,6 +144,19 @@ const Register = () => {
             </div>
 
             <div className="form-group">
+              <label htmlFor="rollno">Roll Number</label>
+              <input
+                type="text"
+                id="rollno"
+                name="rollno"
+                value={formData.rollno}
+                onChange={handleInputChange}
+                placeholder="e.g., 21B81A05J7"
+                required
+              />
+            </div>
+
+            <div className="form-group">
               <label htmlFor="email">Email Address</label>
               <input
                 type="email"
@@ -168,6 +176,7 @@ const Register = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
+                placeholder="+91XXXXXXXXXX"
                 required
               />
             </div>
@@ -180,7 +189,6 @@ const Register = () => {
                 value={formData.year}
                 onChange={handleInputChange}
                 required
-                
               >
                 <option value="">Select Year</option>
                 <option value="1">1st Year</option>

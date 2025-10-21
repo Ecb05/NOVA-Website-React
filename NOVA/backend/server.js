@@ -11,6 +11,8 @@ import rateLimit from 'express-rate-limit';
 import emailService from './EmailService.js';
 import crypto from 'crypto';
 
+import AnnouncementService from './AnnouncementService.js';
+
 // Load environment variables
 dotenv.config();
 
@@ -146,56 +148,75 @@ app.post('/api/admin/login', (req, res) => {
 // ============================================
 // ANNOUNCEMENTS ENDPOINTS
 // ============================================
-
 // Get announcements
-app.get('/api/announcements', (req, res) => {
+app.get('/api/announcements', async (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync(announcementsPath, 'utf-8'));
+    const data = await AnnouncementService.getAnnouncements();
     res.json(data);
   } catch (error) {
-    console.error('GET Error:', error);
-    res.status(500).json({ error: 'Failed to load announcements' });
+    console.error('[API] GET announcements error:', error);
+    
+    // Return empty announcements on error to prevent frontend breaking
+    res.status(200).json({ announcements: [] });
   }
 });
 
-// Add announcement
-app.post('/api/announcements', (req, res) => {
+// Add announcement (admin only)
+app.post('/api/announcements', async (req, res) => {
   try {
-    const data = JSON.parse(fs.readFileSync(announcementsPath, 'utf-8'));
-    const newAnnouncement = { ...req.body, id: Date.now() };
+    // Optional: Add admin authentication here
+    // const { password } = req.headers;
+    // if (password !== process.env.ADMIN_PASSWORD) {
+    //   return res.status(401).json({ error: 'Unauthorized' });
+    // }
+
+    const newAnnouncement = await AnnouncementService.addAnnouncement(req.body);
     
-    // Add to the announcements array inside the object
-    data.announcements.unshift(newAnnouncement);
+    // Return all announcements after adding
+    const data = await AnnouncementService.getAnnouncements();
     
-    fs.writeFileSync(announcementsPath, JSON.stringify(data, null, 2));
-    res.json({ success: true, announcement: newAnnouncement });
+    res.json({ 
+      success: true, 
+      announcement: newAnnouncement,
+      announcements: data.announcements 
+    });
+    
   } catch (error) {
-    console.error('POST Error:', error);
-    res.status(500).json({ error: 'Failed to add announcement' });
+    console.error('[API] POST announcement error:', error);
+    res.status(500).json({ 
+      error: 'Failed to add announcement',
+      message: error.message 
+    });
   }
 });
-// Delete announcement
-app.delete('/api/announcements/:id', (req, res) => {
+
+// Delete announcement (admin only)
+app.delete('/api/announcements/:id', async (req, res) => {
   try {
-    const announcementId = parseInt(req.params.id);
-    const data = JSON.parse(fs.readFileSync(announcementsPath, 'utf-8'));
+    // Optional: Add admin authentication
     
-    // Filter out the announcement with the matching id
-    const originalLength = data.announcements.length;
-    data.announcements = data.announcements.filter(
-      announcement => announcement.id !== announcementId
-    );
+    await AnnouncementService.deleteAnnouncement(req.params.id);
     
-    // Check if an announcement was actually deleted
-    if (data.announcements.length === originalLength) {
-      return res.status(404).json({ error: 'Announcement not found' });
-    }
+    // Return updated list
+    const data = await AnnouncementService.getAnnouncements();
     
-    fs.writeFileSync(announcementsPath, JSON.stringify(data, null, 2));
-    res.json({ success: true, message: 'Announcement deleted successfully' });
+    res.json({ 
+      success: true, 
+      message: 'Announcement deleted successfully',
+      announcements: data.announcements 
+    });
+    
   } catch (error) {
-    console.error('DELETE Error:', error);
-    res.status(500).json({ error: 'Failed to delete announcement' });
+    console.error('[API] DELETE announcement error:', error);
+    
+    if (error.message.includes('not found')) {
+      res.status(404).json({ error: 'Announcement not found' });
+    } else {
+      res.status(500).json({ 
+        error: 'Failed to delete announcement',
+        message: error.message 
+      });
+    }
   }
 });
 
@@ -605,6 +626,331 @@ app.post('/api/submit', async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
+// DEBUG endpoint - remove after testing
+app.get('/api/debug/announcements', async (req, res) => {
+  try {
+    const dataSourceId = await AnnouncementService.getDataSourceId();
+    const response = await notion.request({
+      path: `data_sources/${dataSourceId}/query`,
+      method: 'POST',
+      body: {
+        filter: {
+          property: 'Active',
+          checkbox: { equals: true }
+        }
+      }
+    });
+    
+    // Return raw Notion response
+    res.json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ============================================
+// CLUB MEMBERSHIP REGISTRATION ENDPOINT
+// ============================================
+
+/**
+ * Club Registration Endpoint
+ * POST /api/clubregister
+ * Stores member data in Notion database
+ */
+app.post('/api/clubregister', async (req, res) => {
+  console.log('[CLUB REGISTER] New registration request received');
+  const startTime = Date.now();
+
+  const {
+    name,
+    rollno,
+    email,
+    phone,
+    year,
+    interests,
+    message
+  } = req.body;
+
+  // Basic validation
+  if (!name || !rollno || !email || !phone || !year) {
+    console.log('[CLUB REGISTER] Validation failed - missing required fields');
+    return res.status(400).json({
+      success: false,
+      message: 'Name, Roll Number, Email, Phone, and Year are required'
+    });
+  }
+
+  // Email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    console.log('[CLUB REGISTER] Validation failed - invalid email');
+    return res.status(400).json({
+      success: false,
+      message: 'Please provide a valid email address'
+    });
+  }
+
+  // Phone validation
+  const phoneRegex = /^[6-9]\d{9}$/;
+  const cleanPhone = phone.replace(/\s+/g, '').replace(/^\+91/, '');
+  if (!phoneRegex.test(cleanPhone)) {
+    console.log('[CLUB REGISTER] Validation failed - invalid phone');
+    return res.status(400).json({
+      success: false,
+      message: 'Please provide a valid 10-digit phone number'
+    });
+  }
+
+  // Check if Notion is configured
+  if (!process.env.NOTION_API_KEY) {
+    console.error('[CLUB REGISTER] NOTION_API_KEY missing');
+    return res.status(500).json({
+      success: false,
+      message: 'Server configuration error: Notion API key missing'
+    });
+  }
+
+  if (!process.env.NOTION_MEMBERS_DATABASE_ID) {
+    console.error('[CLUB REGISTER] NOTION_MEMBERS_DATABASE_ID missing');
+    return res.status(500).json({
+      success: false,
+      message: 'Server configuration error: Members database not configured'
+    });
+  }
+
+  try {
+    console.log('[CLUB REGISTER] Creating Notion page...');
+
+    // Determine year suffix (1st, 2nd, 3rd, 4th)
+    const yearSuffix = year == 1 ? 'st' : year == 2 ? 'nd' : year == 3 ? 'rd' : 'th';
+    const yearLabel = `${year}${yearSuffix} Year`;
+
+    // Format phone number with +91
+    const formattedPhone = cleanPhone.startsWith('+91') ? cleanPhone : `+91${cleanPhone}`;
+
+    // Create interests array for multi-select
+    const interestsArray = Array.isArray(interests) ? interests : [];
+
+    // Create a new page in Notion database
+    const response = await notion.pages.create({
+      parent: {
+        database_id: process.env.NOTION_MEMBERS_DATABASE_ID,
+      },
+      properties: {
+        'Name': {
+          title: [
+            {
+              text: {
+                content: name,
+              },
+            },
+          ],
+        },
+        'Roll Number': {
+          rich_text: [
+            {
+              text: {
+                content: rollno,
+              },
+            },
+          ],
+        },
+        'Email': {
+          email: email,
+        },
+        'Phone': {
+          phone_number: formattedPhone,
+        },
+        'Year': {
+          select: {
+            name: yearLabel,
+          },
+        },
+        'Interests': {
+          multi_select: interestsArray.map(interest => ({ name: interest })),
+        },
+        'Message': {
+          rich_text: [
+            {
+              text: {
+                content: message || 'No message provided',
+              },
+            },
+          ],
+        },
+        'Registration Date': {
+          date: {
+            start: new Date().toISOString(),
+          },
+        },
+        'Status': {
+          select: {
+            name: 'Pending Review',
+          },
+        },
+      },
+    });
+
+    console.log('[CLUB REGISTER] Notion page created:', response.id);
+    console.log('[CLUB REGISTER] Time elapsed:', Date.now() - startTime, 'ms');
+
+    // Send success response
+    res.status(200).json({
+      success: true,
+      message: 'Registration successful! We will contact you soon.',
+    });
+
+    // Optional: Send welcome email in background (if SendGrid is configured)
+    if (process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL) {
+      (async () => {
+        try {
+          await sendClubWelcomeEmail(email, name);
+          console.log('[CLUB REGISTER] Welcome email sent to:', email);
+        } catch (emailError) {
+          console.error('[CLUB REGISTER] Failed to send welcome email:', emailError.message);
+        }
+      })();
+    }
+
+  } catch (error) {
+    console.error('[CLUB REGISTER] Error:', error);
+    
+    // Handle specific Notion errors
+    if (error.code === 'validation_error') {
+      console.error('[CLUB REGISTER] Notion validation error:', error.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Database validation error. Please contact support.',
+      });
+    }
+    
+    if (error.status === 404) {
+      console.error('[CLUB REGISTER] Database not found');
+      return res.status(500).json({
+        success: false,
+        message: 'Database not found. Please contact support.',
+      });
+    }
+
+    if (error.status === 401) {
+      console.error('[CLUB REGISTER] Authentication failed');
+      return res.status(500).json({
+        success: false,
+        message: 'Authentication error. Please contact support.',
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Failed to submit registration. Please try again later.',
+    });
+  }
+});
+
+// ============================================
+// OPTIONAL: WELCOME EMAIL FUNCTION
+// ============================================
+
+/**
+ * Send welcome email to new club member
+ * Only runs if SendGrid is configured
+ */ 
+async function sendClubWelcomeEmail(email, name) {
+  const sgMail = require('@sendgrid/mail');
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+  const msg = {
+    to: email,
+    from: process.env.SENDGRID_FROM_EMAIL,
+    subject: 'Welcome to NOVA - Registration Confirmed! 🎉',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <td align="center" style="padding: 40px 0;">
+              <table role="presentation" style="width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                
+                <!-- Header -->
+                <tr>
+                  <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+                    <h1 style="color: #ffffff; margin: 0; font-size: 32px;">Welcome to NOVA! 🚀</h1>
+                  </td>
+                </tr>
+
+                <!-- Content -->
+                <tr>
+                  <td style="padding: 40px 30px;">
+                    <h2 style="color: #333; margin-top: 0; font-size: 24px;">Hey ${name}! 👋</h2>
+                    <p style="color: #666; font-size: 16px; line-height: 1.6;">
+                      Thank you for registering with <strong>NOVA</strong>. We're excited to have you join our community of tech enthusiasts!
+                    </p>
+
+                    <!-- Info Box -->
+                    <table role="presentation" style="width: 100%; margin: 30px 0; border-collapse: collapse;">
+                      <tr>
+                        <td style="background-color: #f8f9fa; padding: 25px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                          <h3 style="color: #333; margin-top: 0; font-size: 18px;">What's Next? 🎯</h3>
+                          <ul style="color: #666; line-height: 1.8; padding-left: 20px;">
+                            <li>✅ We'll review your application within 2-3 days</li>
+                            <li>📧 You'll receive updates about upcoming events and workshops</li>
+                            <li>🤝 Join our community channels for networking opportunities</li>
+                            <li>💻 Get access to exclusive resources and mentorship</li>
+                          </ul>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Tip Box -->
+                    <table role="presentation" style="width: 100%; margin: 30px 0; border-collapse: collapse;">
+                      <tr>
+                        <td style="background-color: #fff3cd; padding: 20px; border-radius: 8px; border-left: 4px solid #ffc107;">
+                          <p style="margin: 0; color: #856404; font-size: 15px;">
+                            <strong>💡 Pro Tip:</strong> Follow us on social media to stay updated with the latest tech trends and NOVA activities!
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <p style="color: #666; font-size: 16px; line-height: 1.6; margin-top: 30px;">
+                      Stay tuned for more updates! If you have any questions, feel free to reach out.
+                    </p>
+
+                    <p style="color: #666; font-size: 16px; line-height: 1.6; margin-top: 20px;">
+                      Best regards,<br>
+                      <strong style="color: #ffc107;">The NOVA Team</strong>
+                    </p>
+                  </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                  <td style="background-color: #f8f9fa; padding: 20px 30px; text-align: center; border-top: 1px solid #e9ecef;">
+                    <p style="margin: 0; color: #999; font-size: 12px; line-height: 1.5;">
+                      This email was sent by NOVA Tech Club<br>
+                      If you didn't register, please ignore this email.
+                    </p>
+                  </td>
+                </tr>
+
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+      </html>
+    `,
+  };
+
+  await sgMail.send(msg);
+}
+
 
 // ============================================
 // ADMIN ENDPOINTS

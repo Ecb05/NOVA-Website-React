@@ -20,7 +20,7 @@ const AnnouncementsPage = () => {
     const data = await response.json();
     // Access the announcements array from the object
     const announcementsArray = data.announcements || [];
-    setAnnouncements(announcementsArray.filter(item => item.isActive));
+    setAnnouncements(announcementsArray);
   } catch (error) {
     console.error('Error loading announcements:', error);
     setAnnouncements([]);
