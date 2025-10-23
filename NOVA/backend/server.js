@@ -6,7 +6,6 @@ import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import { Client } from '@notionhq/client';
 import rateLimit from 'express-rate-limit';
-import emailService from './EmailService.js';
 import crypto from 'crypto';
 
 import AnnouncementService from './AnnouncementService.js';
@@ -60,6 +59,76 @@ const uploadToCloudinary = (buffer) => {
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,
 });
+
+// ============================================
+// NOTION CACHE - Add this complete section
+// ============================================
+
+const notionCache = {
+  registrationDataSourceId: null,
+  membersDataSourceId: null
+};
+
+/**
+ * Get cached registration database data source ID
+ * Saves 1-2 seconds per submission!
+ */
+async function getRegistrationDataSourceId() {
+  if (notionCache.registrationDataSourceId) {
+    console.log('[CACHE] Using cached registration dataSourceId');
+    return notionCache.registrationDataSourceId;
+  }
+
+  try {
+    console.log('[CACHE] Fetching registration dataSourceId...');
+    const database = await notion.databases.retrieve({
+      database_id: process.env.NOTION_DATABASE_ID
+    });
+
+    notionCache.registrationDataSourceId = database.data_sources[0].id;
+    console.log('[CACHE] Cached registration dataSourceId:', notionCache.registrationDataSourceId);
+    
+    return notionCache.registrationDataSourceId;
+  } catch (error) {
+    console.error('[CACHE] Error fetching dataSourceId:', error);
+    throw error;
+  }
+}
+
+/**
+ * Optional: Get cached members database data source ID
+ */
+/**async function getMembersDataSourceId() {
+  if (notionCache.membersDataSourceId) {
+    console.log('[CACHE] Using cached members dataSourceId');
+    return notionCache.membersDataSourceId;
+  }
+
+  try {
+    console.log('[CACHE] Fetching members dataSourceId...');
+    const database = await notion.databases.retrieve({
+      database_id: process.env.NOTION_MEMBERS_DATABASE_ID
+    });
+
+    notionCache.membersDataSourceId = database.data_sources[0].id;
+    console.log('[CACHE] Cached members dataSourceId');
+    
+    return notionCache.membersDataSourceId;
+  } catch (error) {
+    console.error('[CACHE] Error fetching members dataSourceId:', error);
+    throw error;
+  }
+}**/
+
+/**
+ * Clear cache (useful for debugging or if database structure changes)
+ */
+function clearNotionCache() {
+  notionCache.registrationDataSourceId = null;
+  notionCache.membersDataSourceId = null;
+  console.log('[CACHE] Cache cleared');
+}
+
 
 const app = express();
 
@@ -215,103 +284,7 @@ function generateTeamId() {
 /**
  * Background processing function for Notion and email
  */
-async function processRegistrationAsync(teamId, teamName, teamLeaderEmail, members) {
-  try {
-    // Create a new record in Notion database with timeout
-    const createNotionPage = notion.pages.create({
-      parent: {
-        database_id: process.env.NOTION_DATABASE_ID,
-      },
-      properties: {
-        'Team Name': {
-          title: [
-            {
-              text: {
-                content: teamName,
-              },
-            },
-          ],
-        },
-        'Team Leader Email': {
-          email: teamLeaderEmail,
-        },
-        'Team Members': {
-          rich_text: [
-            {
-              text: {
-                content: members.join(', ')
-              }
-            }
-          ]
-        },
-        'Team ID': {
-          rich_text: [
-            {
-              text: {
-                content: teamId
-              }
-            }
-          ]
-        },
-        'Registration Date': {
-          date: {
-            start: new Date().toISOString(),
-          },
-        },
-        'Status': {
-          select: {
-            name: 'Active'
-          }
-        }
-      },
-    });
 
-    // Add timeout to the Notion API call (60 seconds for background)
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Notion API request timed out after 60 seconds')), 60000);
-    });
-
-    const response = await Promise.race([createNotionPage, timeoutPromise]);
-    
-    console.log('Notion record created:', response.id);
-    
-    // Send confirmation email (with shorter timeout)
-    try {
-      // Set a timeout for email sending
-      const emailPromise = emailService.sendConfirmationEmail({ 
-        name: teamName, 
-        email: teamLeaderEmail,
-        teamId: teamId 
-      });
-      
-      const emailTimeout = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Email timeout')), 5000); // 5 second timeout
-      });
-      
-      await Promise.race([emailPromise, emailTimeout]);
-      console.log('Confirmation email sent successfully to:', teamLeaderEmail);
-    } catch (emailError) {
-      console.error('Error sending confirmation email:', emailError.message || emailError);
-      // Log this error but don't fail since registration already succeeded
-    }
-    
-  } catch (error) {
-    console.error('Error in background registration processing:', error);
-    
-    // Log detailed error information
-    if (error.code === 'validation_error') {
-      console.error('Notion validation error for team:', teamId, error.message);
-    } else if (error.status === 404) {
-      console.error('Notion database not found for team:', teamId);
-    } else if (error.status === 401) {
-      console.error('Notion authentication failed for team:', teamId);
-    }
-    
-    // You could implement retry logic here or store failed registrations
-    // for manual review/retry
-    throw error; // Re-throw so it's caught by the outer catch
-  }
-}
 
 // ============================================
 // REGISTRATION ENDPOINT WITH FILE UPLOAD
@@ -396,7 +369,7 @@ app.post('/api/register', upload.single('paymentProof'), (req, res) => {
   
   const responseData = {
     success: true,
-    message: 'Registration successful! Check your email for confirmation and your Team ID.',
+    message:  'Registration successful! Save your Team ID somewhere safe!',
     teamId: teamId
   };
   
@@ -500,26 +473,7 @@ app.post('/api/register', upload.single('paymentProof'), (req, res) => {
       });
 
       const notionResponse = await Promise.race([createNotionPage, timeoutPromise]);
-      console.log('[REGISTER-BG] Notion record created:', notionResponse.id);
-      
-      // Send confirmation email
-      try {
-        const emailPromise = emailService.sendConfirmationEmail({ 
-          name: teamName, 
-          email: teamLeaderEmail,
-          teamId: teamId 
-        });
-        
-        const emailTimeout = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Email timeout')), 5000);
-        });
-        
-        await Promise.race([emailPromise, emailTimeout]);
-        console.log('[REGISTER-BG] Confirmation email sent to:', teamLeaderEmail);
-      } catch (emailError) {
-        console.error('[REGISTER-BG] Error sending email:', emailError.message || emailError);
-      }
-      
+      console.log('[REGISTER-BG] Notion record created:', notionResponse.id); 
       console.log('[REGISTER-BG] Background processing completed for team:', teamId);
       
     } catch (error) {
@@ -611,24 +565,64 @@ app.post('/api/submit', async (req, res) => {
 });
 
 // DEBUG endpoint - remove after testing
-app.get('/api/debug/announcements', async (req, res) => {
+app.post('/api/submit', async (req, res) => {
   try {
-    const dataSourceId = await AnnouncementService.getDataSourceId();
+    const { submissionTeamId, projectUrl } = req.body;
+
+    if (!submissionTeamId || !projectUrl) {
+      return res.status(400).json({
+        success: false,
+        message: 'Team ID and Project URL are required'
+      });
+    }
+
+    // ✅ USE CACHED DATA SOURCE ID
+    const dataSourceId = await getRegistrationDataSourceId();
+
+    // Rest of your code stays the same...
     const response = await notion.request({
       path: `data_sources/${dataSourceId}/query`,
       method: 'POST',
       body: {
         filter: {
-          property: 'Active',
-          checkbox: { equals: true }
+          and: [
+            { property: 'Team ID', rich_text: { equals: submissionTeamId } },
+            { property: 'Status', select: { equals: 'Active' } }
+          ]
         }
       }
     });
-    
-    // Return raw Notion response
-    res.json(response);
+
+    if (response.results.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Team not found or not active'
+      });
+    }
+
+    const submissionDate = new Date().toISOString();
+    await notion.pages.update({
+      page_id: response.results[0].id,
+      properties: {
+        'Project URL': { url: projectUrl },
+        'Submission Date': { date: { start: submissionDate } }
+      }
+    });
+
+    res.json({ success: true, message: 'Project submitted successfully!' });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('[SUBMIT] Error:', error);
+    
+    // Clear cache on errors
+    if (error.code === 'object_not_found' || error.status === 404) {
+      clearNotionCache();
+    }
+    
+    res.status(500).json({
+      success: false,
+      message: 'Submission failed. Please try again.'
+    });
   }
 });
 
@@ -839,100 +833,7 @@ app.post('/api/clubregister', async (req, res) => {
  * Send welcome email to new club member
  * Only runs if SendGrid is configured
  */ 
-async function sendClubWelcomeEmail(email, name) {
-  const sgMail = require('@sendgrid/mail');
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-  const msg = {
-    to: email,
-    from: process.env.SENDGRID_FROM_EMAIL,
-    subject: 'Welcome to NOVA - Registration Confirmed! 🎉',
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      </head>
-      <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-        <table role="presentation" style="width: 100%; border-collapse: collapse;">
-          <tr>
-            <td align="center" style="padding: 40px 0;">
-              <table role="presentation" style="width: 600px; border-collapse: collapse; background-color: #ffffff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                
-                <!-- Header -->
-                <tr>
-                  <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
-                    <h1 style="color: #ffffff; margin: 0; font-size: 32px;">Welcome to NOVA! 🚀</h1>
-                  </td>
-                </tr>
-
-                <!-- Content -->
-                <tr>
-                  <td style="padding: 40px 30px;">
-                    <h2 style="color: #333; margin-top: 0; font-size: 24px;">Hey ${name}! 👋</h2>
-                    <p style="color: #666; font-size: 16px; line-height: 1.6;">
-                      Thank you for registering with <strong>NOVA</strong>. We're excited to have you join our community of tech enthusiasts!
-                    </p>
-
-                    <!-- Info Box -->
-                    <table role="presentation" style="width: 100%; margin: 30px 0; border-collapse: collapse;">
-                      <tr>
-                        <td style="background-color: #f8f9fa; padding: 25px; border-radius: 8px; border-left: 4px solid #ffc107;">
-                          <h3 style="color: #333; margin-top: 0; font-size: 18px;">What's Next? 🎯</h3>
-                          <ul style="color: #666; line-height: 1.8; padding-left: 20px;">
-                            <li>✅ We'll review your application within 2-3 days</li>
-                            <li>📧 You'll receive updates about upcoming events and workshops</li>
-                            <li>🤝 Join our community channels for networking opportunities</li>
-                            <li>💻 Get access to exclusive resources and mentorship</li>
-                          </ul>
-                        </td>
-                      </tr>
-                    </table>
-
-                    <!-- Tip Box -->
-                    <table role="presentation" style="width: 100%; margin: 30px 0; border-collapse: collapse;">
-                      <tr>
-                        <td style="background-color: #fff3cd; padding: 20px; border-radius: 8px; border-left: 4px solid #ffc107;">
-                          <p style="margin: 0; color: #856404; font-size: 15px;">
-                            <strong>💡 Pro Tip:</strong> Follow us on social media to stay updated with the latest tech trends and NOVA activities!
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-
-                    <p style="color: #666; font-size: 16px; line-height: 1.6; margin-top: 30px;">
-                      Stay tuned for more updates! If you have any questions, feel free to reach out.
-                    </p>
-
-                    <p style="color: #666; font-size: 16px; line-height: 1.6; margin-top: 20px;">
-                      Best regards,<br>
-                      <strong style="color: #ffc107;">The NOVA Team</strong>
-                    </p>
-                  </td>
-                </tr>
-
-                <!-- Footer -->
-                <tr>
-                  <td style="background-color: #f8f9fa; padding: 20px 30px; text-align: center; border-top: 1px solid #e9ecef;">
-                    <p style="margin: 0; color: #999; font-size: 12px; line-height: 1.5;">
-                      This email was sent by NOVA Tech Club<br>
-                      If you didn't register, please ignore this email.
-                    </p>
-                  </td>
-                </tr>
-
-              </table>
-            </td>
-          </tr>
-        </table>
-      </body>
-      </html>
-    `,
-  };
-
-  await sgMail.send(msg);
-}
 
 
 // ============================================
@@ -943,31 +844,7 @@ async function sendClubWelcomeEmail(email, name) {
  * Send reminder emails to teams who haven't submitted
  * This can be triggered manually or via cron job
  */
-app.post('/api/send-reminders', async (req, res) => {
-  // Optional: Add authentication/authorization here
-  const authHeader = req.headers.authorization;
-  
-  if (process.env.ADMIN_API_KEY && authHeader !== `Bearer ${process.env.ADMIN_API_KEY}`) {
-    return res.status(401).json({
-      success: false,
-      message: 'Unauthorized'
-    });
-  }
 
-  try {
-    await emailService.sendReminderToNonSubmitters();
-    res.status(200).json({
-      success: true,
-      message: 'Reminder emails sent successfully'
-    });
-  } catch (error) {
-    console.error('Error sending reminders:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to send reminder emails: ' + error.message
-    });
-  }
-});
 
 // ============================================
 // HEALTH CHECK & TEST ENDPOINTS
@@ -1015,7 +892,6 @@ app.listen(PORT, () => {
   console.log('='.repeat(50));
   console.log(`✅ Server running on port ${PORT}`);
   console.log(`✅ Environment: ${process.env.NODE_ENV || 'development'}`);
-  //console.log(`✅ Data directory: ${dataDir}`);
   console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
   console.log(`✅ Test endpoint: http://localhost:${PORT}/api/test`);
   console.log(`📝 Notion database: ${process.env.NOTION_DATABASE_ID ? 'Configured' : 'NOT CONFIGURED'}`);
