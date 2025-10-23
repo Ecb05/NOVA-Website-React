@@ -494,77 +494,6 @@ app.post('/api/register', upload.single('paymentProof'), (req, res) => {
 // SUBMISSION ENDPOINT
 // ============================================
 
-/**
- * Project submission endpoint with email notification
- */
-app.post('/api/submit', async (req, res) => {
-  try {
-    const { submissionTeamId, projectUrl } = req.body;
-
-    // Step 1: Get the database to find data source ID
-    const database = await notion.databases.retrieve({
-      database_id: process.env.NOTION_DATABASE_ID
-    });
-
-    // Get the first data source ID
-    const dataSourceId = database.data_sources[0].id;
-
-    // Step 2: Query the data source using notion.request
-    const response = await notion.request({
-      path: `data_sources/${dataSourceId}/query`,
-      method: 'POST',
-      body: {
-        filter: {
-          and: [
-            {
-              property: 'Team ID',
-              rich_text: {
-                equals: submissionTeamId
-              }
-            },
-            {
-              property: 'Status',
-              select: {
-                equals: 'Active'
-              }
-            }
-          ]
-        }
-      }
-    });
-
-    if (response.results.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Team not found or not active'
-      });
-    }
-    
-    const submissionDate = new Date().toISOString();
-
-    await notion.pages.update({
-      page_id: response.results[0].id,
-      properties: {
-        'Project URL': {
-          url: projectUrl
-        },
-        'Submission Date': {
-          date: {
-            start: submissionDate
-          }
-        }
-      }
-    });
-
-    res.json({ success: true, message: 'Project submitted successfully!' });
-
-  } catch (error) {
-    console.error('Full error:', error);
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
-
-// DEBUG endpoint - remove after testing
 app.post('/api/submit', async (req, res) => {
   try {
     const { submissionTeamId, projectUrl } = req.body;
@@ -576,10 +505,9 @@ app.post('/api/submit', async (req, res) => {
       });
     }
 
-    // ✅ USE CACHED DATA SOURCE ID
+    //  USE CACHED DATA SOURCE ID
     const dataSourceId = await getRegistrationDataSourceId();
 
-    // Rest of your code stays the same...
     const response = await notion.request({
       path: `data_sources/${dataSourceId}/query`,
       method: 'POST',
@@ -587,7 +515,10 @@ app.post('/api/submit', async (req, res) => {
         filter: {
           and: [
             { property: 'Team ID', rich_text: { equals: submissionTeamId } },
-            { property: 'Status', select: { equals: 'Active' } }
+            { or: [
+                { property: 'Status', select: { equals: 'Active' } },
+                { property: 'Status', select: { equals: 'Pending Verification' } }
+            ]}
           ]
         }
       }
@@ -630,11 +561,6 @@ app.post('/api/submit', async (req, res) => {
 // CLUB MEMBERSHIP REGISTRATION ENDPOINT
 // ============================================
 
-/**
- * Club Registration Endpoint
- * POST /api/clubregister
- * Stores member data in Notion database
- */
 app.post('/api/clubregister', async (req, res) => {
   console.log('[CLUB REGISTER] New registration request received');
   const startTime = Date.now();
@@ -824,27 +750,6 @@ app.post('/api/clubregister', async (req, res) => {
     });
   }
 });
-
-// ============================================
-// OPTIONAL: WELCOME EMAIL FUNCTION
-// ============================================
-
-/**
- * Send welcome email to new club member
- * Only runs if SendGrid is configured
- */ 
-
-
-
-// ============================================
-// ADMIN ENDPOINTS
-// ============================================
-
-/**
- * Send reminder emails to teams who haven't submitted
- * This can be triggered manually or via cron job
- */
-
 
 // ============================================
 // HEALTH CHECK & TEST ENDPOINTS
