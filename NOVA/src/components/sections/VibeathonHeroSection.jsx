@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const VibeathonHeroSection = () => {
+const VibeathonHeroSection = ({ onScrollToSection }) => {
   return (
     <section className="vibe-hero">
       <div className="vibe-hero-content">
@@ -10,10 +10,10 @@ const VibeathonHeroSection = () => {
         <p>Get ready to solve exciting problem statements using any AI tools of your choice, all from the comfort of your home!</p>
         <div className="vibe-hero-buttons">
           <button 
-            onClick={() => scrollToSection('about')} 
+            onClick={() => onScrollToSection('problem-statements')} 
             className="vibe-btn primary-btn"
           >
-            Learn More
+            Problem statements
           </button>
           <Link to="/register" className="vibe-btn secondary-btn">
             Register Now

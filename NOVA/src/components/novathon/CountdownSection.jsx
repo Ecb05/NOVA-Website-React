@@ -10,12 +10,11 @@ const CountdownSection = ({ onOpenRegistration, onOpenSubmission }) => {
 
   useEffect(() => {
     // Set your event date here
-    const targetDate = new Date('2025-10-25T00:00:00').getTime();
+    const targetDate = new Date('2025-11-03T00:00:00').getTime();
 
     const interval = setInterval(() => {
       const now = new Date().getTime();
       const distance = targetDate - now;
-
       if (distance < 0) {
         clearInterval(interval);
         setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
