@@ -33,7 +33,7 @@ const CountdownSection = ({ onOpenRegistration, onOpenSubmission }) => {
   }, []);
 
   return (
-    <section className="countdown-section">
+    <section id='countdown-section' className="countdown-section">
       <div className="container">
         <div className="countdown-container" data-aos="fade-up">
           <h2><span className="highlight">Novathon 2025</span></h2>

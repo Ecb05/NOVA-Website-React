@@ -15,9 +15,12 @@ const VibeathonHeroSection = ({ onScrollToSection }) => {
           >
             Problem statements
           </button>
-          <Link to="/register" className="vibe-btn secondary-btn">
+          <button 
+            onClick={() => onScrollToSection('countdown-section')} 
+            className="vibe-btn secondary-btn"
+          >
             Register Now
-          </Link>
+          </button>
         </div>
       </div>
       <div className="vibe-hero-image">
