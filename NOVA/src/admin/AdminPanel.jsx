@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const AdminPanel = () => {
   const [announcements, setAnnouncements] = useState([]);
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -18,12 +19,14 @@ const AdminPanel = () => {
 
   // Check if already authenticated
   useEffect(() => {
-    const authenticated = localStorage.getItem('adminAuth');
-    if (authenticated === 'true') {
-      setIsAuthenticated(true);
-      loadAnnouncements();
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+     
+       setIsAuthenticated(true);
+       loadAnnouncements();
     }
   }, []);
+
 
   const authenticate = async () => {
     try {
@@ -32,27 +35,31 @@ const AdminPanel = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ username, password })
       });
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data.success && data.token) {
+        // Store the JWT token
+        localStorage.setItem('adminToken', data.token);
         setIsAuthenticated(true);
-        localStorage.setItem('adminAuth', 'true');
+        setPassword(''); // Clear password from state
         loadAnnouncements();
       } else {
-        alert('Incorrect password');
+        alert(data.error || 'Login failed');
       }
     } catch (error) {
       console.error('Authentication error:', error);
-      alert('Authentication failed');
+      alert('Authentication failed. Please try again.');
     }
   };
 
   const logout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem('adminAuth');
+    localStorage.removeItem('adminToken');
+    setUsername('');
+    setPassword('');
   };
 
   // Load announcements
@@ -85,13 +92,24 @@ const AdminPanel = () => {
         return;
       }
 
+      const token = localStorage.getItem('adminToken');
+      
+      if (!token) {
+        alert('Not authenticated. Please login again.');
+        setIsAuthenticated(false);
+        return;
+      }
+
       const response = await fetch('/api/announcements', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(formData)
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         alert('Announcement added successfully!');
@@ -99,8 +117,13 @@ const AdminPanel = () => {
         resetForm();
         loadAnnouncements();
       } else {
-        const errorData = await response.json();
-        alert('Error adding announcement: ' + (errorData.message || 'Unknown error'));
+        // Check if it's an auth error
+        if (response.status === 401) {
+          alert('Session expired. Please login again.');
+          logout();
+        } else {
+          alert('Error adding announcement: ' + (data.error || data.message || 'Unknown error'));
+        }
       }
     } catch (error) {
       console.error('Error adding announcement:', error);
@@ -112,15 +135,32 @@ const AdminPanel = () => {
   const deleteAnnouncement = async (id) => {
     if (window.confirm('Are you sure you want to delete this announcement?')) {
       try {
+        const token = localStorage.getItem('adminToken');
+        
+        if (!token) {
+          alert('Not authenticated. Please login again.');
+          setIsAuthenticated(false);
+          return;
+        }
+
         const response = await fetch(`/api/announcements/${id}`, {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
 
         if (response.ok) {
           alert('Announcement deleted!');
           loadAnnouncements();
         } else {
-          alert('Error deleting announcement');
+          // Check if it's an auth error
+          if (response.status === 401) {
+            alert('Session expired. Please login again.');
+            logout();
+          } else {
+            alert('Error deleting announcement');
+          }
         }
       } catch (error) {
         console.error('Error deleting announcement:', error);
@@ -156,8 +196,24 @@ const AdminPanel = () => {
       }}>
         <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Admin Login</h2>
         <input 
+          type="text" 
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          onKeyPress={(e) => e.key === 'Enter' && document.getElementById('password-input').focus()}
+          style={{
+            width: '100%',
+            padding: '0.75rem',
+            marginBottom: '1rem',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            fontSize: '1rem'
+          }}
+        />
+        <input 
+          id="password-input"
           type="password" 
-          placeholder="Enter admin password"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && authenticate()}
@@ -237,267 +293,196 @@ const AdminPanel = () => {
       {/* Add Announcement Form */}
       {showForm && (
         <div style={{
-          backgroundColor: 'rgba(30, 30, 30, 0.9)',
           padding: '2rem',
+          backgroundColor: 'rgba(30, 30, 30, 0.8)',
           borderRadius: '8px',
-          border: '1px solid #ddd',
           marginBottom: '2rem'
         }}>
-          <h3>Add New Announcement</h3>
+          <h2 style={{ marginBottom: '1.5rem' }}>Add New Announcement</h2>
           
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-              Title: <span style={{ color: 'red' }}>*</span>
-            </label>
+          <div style={{ display: 'grid', gap: '1rem' }}>
             <input
               type="text"
               name="title"
+              placeholder="Title *"
               value={formData.title}
               onChange={handleInputChange}
-              placeholder="e.g., NOVA Inaugural Event"
               style={{
-                width: '100%',
-                padding: '0.5rem',
+                padding: '0.75rem',
                 border: '1px solid #ddd',
-                borderRadius: '4px'
+                borderRadius: '4px',
+                fontSize: '1rem'
               }}
-              required
             />
-          </div>
-
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>
-              Description: <span style={{ color: 'red' }}>*</span>
-            </label>
+            
             <textarea
               name="description"
+              placeholder="Description *"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="Join us for the launch event..."
-              rows="3"
+              rows="4"
               style={{
-                width: '100%',
-                padding: '0.5rem',
+                padding: '0.75rem',
                 border: '1px solid #ddd',
-                borderRadius: '4px'
+                borderRadius: '4px',
+                fontSize: '1rem',
+                fontFamily: 'inherit'
               }}
-              required
             />
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Date (Day):</label>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <input
                 type="text"
                 name="dateDay"
+                placeholder="Day (e.g., 15)"
                 value={formData.dateDay}
                 onChange={handleInputChange}
-                placeholder="e.g., 25th"
                 style={{
-                  width: '100%',
-                  padding: '0.5rem',
+                  padding: '0.75rem',
                   border: '1px solid #ddd',
-                  borderRadius: '4px'
+                  borderRadius: '4px',
+                  fontSize: '1rem'
                 }}
               />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Date (Month):</label>
+              
               <input
                 type="text"
                 name="dateMonth"
+                placeholder="Month (e.g., JAN)"
                 value={formData.dateMonth}
                 onChange={handleInputChange}
-                placeholder="e.g., JUNE"
                 style={{
-                  width: '100%',
-                  padding: '0.5rem',
+                  padding: '0.75rem',
                   border: '1px solid #ddd',
-                  borderRadius: '4px'
+                  borderRadius: '4px',
+                  fontSize: '1rem'
                 }}
               />
             </div>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Location:</label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                placeholder="e.g., Virtual Meeting"
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px'
-                }}
-              />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Time:</label>
-              <input
-                type="text"
-                name="time"
-                value={formData.time}
-                onChange={handleInputChange}
-                placeholder="e.g., 7:00 PM - 9:00 PM"
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px'
-                }}
-              />
-            </div>
-          </div>
-
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Registration Link:</label>
+            
             <input
-              type="url"
-              name="registrationLink"
-              value={formData.registrationLink}
+              type="text"
+              name="location"
+              placeholder="Location"
+              value={formData.location}
               onChange={handleInputChange}
-              placeholder="https://forms.google.com/..."
               style={{
-                width: '100%',
-                padding: '0.5rem',
+                padding: '0.75rem',
                 border: '1px solid #ddd',
-                borderRadius: '4px'
+                borderRadius: '4px',
+                fontSize: '1rem'
               }}
             />
-          </div>
-
-          <div style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Icon (FontAwesome class):</label>
+            
+            <input
+              type="text"
+              name="time"
+              placeholder="Time"
+              value={formData.time}
+              onChange={handleInputChange}
+              style={{
+                padding: '0.75rem',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '1rem'
+              }}
+            />
+            
+            <input
+              type="text"
+              name="registrationLink"
+              placeholder="Registration Link"
+              value={formData.registrationLink}
+              onChange={handleInputChange}
+              style={{
+                padding: '0.75rem',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '1rem'
+              }}
+            />
+            
             <input
               type="text"
               name="icon"
+              placeholder="FontAwesome Icon Class (e.g., fas fa-bullhorn)"
               value={formData.icon}
               onChange={handleInputChange}
-              placeholder="e.g., fas fa-calendar-alt"
               style={{
-                width: '100%',
-                padding: '0.5rem',
+                padding: '0.75rem',
                 border: '1px solid #ddd',
-                borderRadius: '4px'
+                borderRadius: '4px',
+                fontSize: '1rem'
               }}
             />
-            <small style={{ color: '#999' }}>
-              Common icons: fas fa-calendar-alt, fas fa-users, fas fa-trophy, fas fa-rocket, fas fa-bullhorn
-            </small>
+            
+            <button
+              onClick={addAnnouncement}
+              style={{
+                padding: '0.75rem',
+                backgroundColor: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '1rem',
+                cursor: 'pointer'
+              }}
+            >
+              Add Announcement
+            </button>
           </div>
-
-          <button 
-            onClick={addAnnouncement}
-            style={{
-              padding: '0.75rem 2rem',
-              backgroundColor: '#28a745',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              marginRight: '1rem'
-            }}
-          >
-            Add Announcement
-          </button>
-          <button 
-            onClick={() => { setShowForm(false); resetForm(); }}
-            style={{
-              padding: '0.75rem 2rem',
-              backgroundColor: '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Cancel
-          </button>
         </div>
       )}
 
-      {/* Existing Announcements */}
+      {/* Announcements List */}
       <div>
-        <h3>Existing Announcements ({announcements.length})</h3>
+        <h2 style={{ marginBottom: '1.5rem' }}>Current Announcements ({announcements.length})</h2>
+        
         {announcements.length === 0 ? (
-          <p style={{ textAlign: 'center', color: '#999', padding: '2rem' }}>
-            No announcements yet. Click "Add Announcement" to create one.
-          </p>
+          <p style={{ textAlign: 'center', color: '#666' }}>No announcements yet.</p>
         ) : (
-          announcements.map(announcement => (
-            <div 
-              key={announcement.id}
-              style={{
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                padding: '1.5rem',
-                marginBottom: '1rem',
-                backgroundColor: 'rgba(30, 30, 30, 0.9)'
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            {announcements.map((announcement) => (
+              <div
+                key={announcement.id}
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: 'rgba(30, 30, 30, 0.8)',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start'
+                }}
+              >
                 <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <i className={announcement.icon} style={{ marginRight: '0.5rem', color: '#8a2be2' }}></i>
-                    <h4 style={{ margin: 0 }}>{announcement.title}</h4>
+                  <h3 style={{ marginBottom: '0.5rem' }}>{announcement.title}</h3>
+                  <p style={{ marginBottom: '0.5rem', color: '#ccc' }}>{announcement.description}</p>
+                  <div style={{ fontSize: '0.9rem', color: '#999' }}>
+                    {announcement.dateDay && announcement.dateMonth && (
+                      <span>📅 {announcement.dateDay} {announcement.dateMonth} | </span>
+                    )}
+                    {announcement.time && <span>🕐 {announcement.time} | </span>}
+                    {announcement.location && <span>📍 {announcement.location}</span>}
                   </div>
-                  <p style={{ margin: '0 0 0.5rem 0', color: '#ccc' }}>{announcement.description}</p>
-                  
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', marginTop: '0.75rem' }}>
-                    <p style={{ margin: 0, color: '#aaa' }}>
-                      <strong>📅 Date:</strong> {announcement.date?.day || 'N/A'} {announcement.date?.month || ''}
-                    </p>
-                    <p style={{ margin: 0, color: '#aaa' }}>
-                      <strong>📍 Location:</strong> {announcement.details?.location || 'N/A'}
-                    </p>
-                    <p style={{ margin: 0, color: '#aaa' }}>
-                      <strong>🕐 Time:</strong> {announcement.details?.time || 'N/A'}
-                    </p>
-                    <p style={{ margin: 0, color: '#aaa' }}>
-                      <strong>Status:</strong> <span style={{ color: announcement.isActive ? '#28a745' : '#dc3545' }}>
-                        {announcement.isActive ? 'Active ✓' : 'Inactive'}
-                      </span>
-                    </p>
-                  </div>
-                  
-                  {announcement.registrationLink && (
-                    <p style={{ margin: '0.5rem 0 0 0' }}>
-                      <strong>🔗 Link:</strong>{' '}
-                      <a 
-                        href={announcement.registrationLink} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        style={{ color: '#4169e1', textDecoration: 'none' }}
-                      >
-                        {announcement.registrationLink}
-                      </a>
-                    </p>
-                  )}
                 </div>
-                <div>
-                  <button 
-                    onClick={() => deleteAnnouncement(announcement.id)}
-                    style={{
-                      padding: '0.5rem 1rem',
-                      backgroundColor: '#dc3545',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    🗑️ Delete
-                  </button>
-                </div>
+                
+                <button
+                  onClick={() => deleteAnnouncement(announcement.id)}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#dc3545',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    marginLeft: '1rem'
+                  }}
+                >
+                  Delete
+                </button>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
     </div>

@@ -1,12 +1,13 @@
 import express from 'express';
 import cors from 'cors';
-
 import dotenv from 'dotenv';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import { Client } from '@notionhq/client';
 import rateLimit from 'express-rate-limit';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 import AnnouncementService from './AnnouncementService.js';
 
@@ -61,7 +62,7 @@ const notion = new Client({
 });
 
 // ============================================
-// NOTION CACHE - Add this complete section
+// NOTION CACHE
 // ============================================
 
 const notionCache = {
@@ -94,32 +95,27 @@ async function getRegistrationDataSourceId() {
     throw error;
   }
 }
-
-/**
- * Optional: Get cached members database data source ID
- */
-/**async function getMembersDataSourceId() {
+async function getMembersDataSourceId() {
   if (notionCache.membersDataSourceId) {
-    console.log('[CACHE] Using cached members dataSourceId');
+    console.log('[CACHE] Using cached registration dataSourceId');
     return notionCache.membersDataSourceId;
   }
 
   try {
-    console.log('[CACHE] Fetching members dataSourceId...');
+    console.log('[CACHE] Fetching registration dataSourceId...');
     const database = await notion.databases.retrieve({
       database_id: process.env.NOTION_MEMBERS_DATABASE_ID
     });
 
     notionCache.membersDataSourceId = database.data_sources[0].id;
-    console.log('[CACHE] Cached members dataSourceId');
+    console.log('[CACHE] Cached registration dataSourceId:', notionCache.membersDataSourceId);
     
     return notionCache.membersDataSourceId;
   } catch (error) {
-    console.error('[CACHE] Error fetching members dataSourceId:', error);
+    console.error('[CACHE] Error fetching dataSourceId:', error);
     throw error;
   }
-}**/
-
+}
 /**
  * Clear cache (useful for debugging or if database structure changes)
  */
@@ -128,6 +124,181 @@ function clearNotionCache() {
   notionCache.membersDataSourceId = null;
   console.log('[CACHE] Cache cleared');
 }
+
+
+/**
+ * Check for duplicate registrations in Notion
+ */
+async function checkDuplicateRegistration(email, phone, transactionId) {
+  try {
+    const dataSourceId = await getRegistrationDataSourceId();
+    
+    const response = await notion.request({
+      path: `data_sources/${dataSourceId}/query`,
+      method: 'POST',
+      body: {
+        filter: {
+          or: [
+            { property: 'Team Leader Email', email: { equals: email } },
+            { property: 'Team Leader Phone', phone_number: { equals: phone } },
+            { property: 'Transaction ID', rich_text: { contains: transactionId } }
+          ]
+        }
+      }
+    });
+
+    if (response.results.length > 0) {
+      const duplicate = response.results[0];
+      const properties = duplicate.properties;
+      
+      // Identify which field is duplicate
+      if (properties['Team Leader Email']?.email === email) {
+        return { isDuplicate: true, field: 'email', message: 'This email is already registered' };
+      }
+      if (properties['Team Leader Phone']?.phone_number === phone) {
+        return { isDuplicate: true, field: 'phone', message: 'This phone number is already registered' };
+      }
+      if (properties['Transaction ID']?.rich_text?.[0]?.text?.content === transactionId) {
+        return { isDuplicate: true, field: 'transactionId', message: 'This transaction ID has already been used' };
+      }
+    }
+
+    return { isDuplicate: false };
+  } catch (error) {
+    console.error('[DUPLICATE CHECK] Error:', error);
+    // On error, allow registration but log
+    return { isDuplicate: false, error: true };
+  }
+}
+
+/**
+ * Check for duplicate club member registrations
+ */
+async function checkDuplicateClubMember(email, rollno, phone) {
+  try {
+   
+    const dataSourceId = await getMembersDataSourceId();
+    
+    const response = await notion.request({
+      path: `data_sources/${dataSourceId}/query`,
+      method: 'POST',
+      body: {
+        filter: {
+          or: [
+            { property: 'Email', email: { equals: email } },
+            { property: 'Roll Number', phone_number: { equals: rollno } },
+            { property: 'Phone', rich_text: { contains: phone } }
+          ]
+        }
+      }
+    });
+
+    if (response.results.length > 0) {
+      const duplicate = response.results[0];
+      const properties = duplicate.properties;
+      
+      if (properties['Email']?.email === email) {
+        return { isDuplicate: true, field: 'email', message: 'This email is already registered' };
+      }
+      if (properties['Roll Number']?.rich_text?.[0]?.text?.content === rollno) {
+        return { isDuplicate: true, field: 'rollno', message: 'This roll number is already registered' };
+      }
+      if (properties['Phone']?.phone_number === phone) {
+        return { isDuplicate: true, field: 'phone', message: 'This phone number is already registered' };
+      }
+    }
+
+    return { isDuplicate: false };
+  } catch (error) {
+    console.error('[DUPLICATE CHECK CLUB] Error:', error);
+    return { isDuplicate: false, error: true };
+  }
+}
+
+/**
+ * Check for duplicate team names
+ */
+async function checkDuplicateTeamName(teamName) {
+  try {
+    const dataSourceId = await getRegistrationDataSourceId();
+    
+    const response = await notion.request({
+      path: `data_sources/${dataSourceId}/query`,
+      method: 'POST',
+      body: {
+        filter: {
+          property: 'Team Name',
+          title: { equals: teamName }
+        }
+      }
+    });
+
+    if (response.results.length > 0) {
+      return { 
+        isDuplicate: true, 
+        message: 'This team name is already taken. Please choose another name.' 
+      };
+    }
+
+    return { isDuplicate: false };
+  } catch (error) {
+    console.error('[DUPLICATE TEAM NAME] Error:', error);
+    return { isDuplicate: false, error: true };
+  }
+}
+
+// ============================================
+// JWT AUTHENTICATION MIDDLEWARE
+// ============================================
+
+/**
+ * Middleware to verify JWT token for admin routes
+ */
+const authenticateAdmin = (req, res, next) => {
+  try {
+    // Get token from Authorization header
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ 
+        success: false, 
+        error: 'No token provided. Please login again.' 
+      });
+    }
+
+    const token = authHeader.split(' ')[1];
+    
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Attach user info to request
+    req.admin = decoded;
+    console.log('[AUTH] Admin authenticated:', decoded.username);
+    next();
+    
+  } catch (error) {
+    console.error('[AUTH] Authentication error:', error.message);
+    
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Invalid token. Please login again.' 
+      });
+    }
+    
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Token expired. Please login again.' 
+      });
+    }
+    
+    return res.status(401).json({ 
+      success: false, 
+      error: 'Authentication failed. Please login again.' 
+    });
+  }
+};
 
 
 const app = express();
@@ -183,24 +354,96 @@ const limiter = rateLimit({
 app.use('/api/register', limiter);
 app.use('/api/submit', limiter);
 
-
-
-//=============================================
-// Authentication endpoint
-//=============================================
-app.post('/api/admin/login', (req, res) => {
-  const { password } = req.body;
-  
-  if (password === process.env.ADMIN_PASSWORD) {
-    res.json({ success: true });
-  } else {
-    res.status(401).json({ success: false, error: 'Incorrect password' });
+// Strict rate limiting for login endpoint (prevent brute force)
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Only 5 login attempts per 15 minutes
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: false, // Count successful logins too
+  message: {
+    success: false,
+    error: 'Too many login attempts. Please try again in 15 minutes.'
   }
 });
+
+
+//=============================================
+// AUTHENTICATION ENDPOINT
+//=============================================
+app.post('/api/admin/login', loginLimiter, async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    // Validate input
+    if (!username || !password) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Username and password are required' 
+      });
+    }
+
+    // Check if admin credentials are configured
+    if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD_HASH) {
+      console.error('[AUTH] Admin credentials not configured');
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Server configuration error' 
+      });
+    }
+
+    // Verify username
+    if (username !== process.env.ADMIN_USERNAME) {
+      console.log('[AUTH] Invalid username attempt:', username);
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Invalid credentials' 
+      });
+    }
+
+    // Verify password with bcrypt
+    const isValidPassword = await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH);
+    
+    if (!isValidPassword) {
+      console.log('[AUTH] Invalid password attempt for user:', username);
+      return res.status(401).json({ 
+        success: false, 
+        error: 'Invalid credentials' 
+      });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { 
+        role: 'admin',
+        username: username,
+        timestamp: Date.now() 
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' } // Token expires in 24 hours
+    );
+    
+    console.log('[AUTH] Login successful for user:', username);
+    
+    res.json({ 
+      success: true, 
+      token: token,
+      message: 'Login successful'
+    });
+    
+  } catch (error) {
+    console.error('[AUTH] Login error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Authentication failed. Please try again.' 
+    });
+  }
+});
+
 // ============================================
 // ANNOUNCEMENTS ENDPOINTS
 // ============================================
-// Get announcements
+// Get announcements (PUBLIC - no auth needed)
 app.get('/api/announcements', async (req, res) => {
   try {
     const data = await AnnouncementService.getAnnouncements();
@@ -213,15 +456,11 @@ app.get('/api/announcements', async (req, res) => {
   }
 });
 
-// Add announcement (admin only)
-app.post('/api/announcements', async (req, res) => {
+// Add announcement (ADMIN ONLY - requires JWT)
+app.post('/api/announcements', authenticateAdmin, async (req, res) => {
   try {
-    // Optional: Add admin authentication here
-    // const { password } = req.headers;
-    // if (password !== process.env.ADMIN_PASSWORD) {
-    //   return res.status(401).json({ error: 'Unauthorized' });
-    // }
-
+    console.log('[API] Adding announcement by admin:', req.admin.username);
+    
     const newAnnouncement = await AnnouncementService.addAnnouncement(req.body);
     
     // Return all announcements after adding
@@ -236,16 +475,17 @@ app.post('/api/announcements', async (req, res) => {
   } catch (error) {
     console.error('[API] POST announcement error:', error);
     res.status(500).json({ 
+      success: false,
       error: 'Failed to add announcement',
       message: error.message 
     });
   }
 });
 
-// Delete announcement (admin only)
-app.delete('/api/announcements/:id', async (req, res) => {
+// Delete announcement (ADMIN ONLY - requires JWT)
+app.delete('/api/announcements/:id', authenticateAdmin, async (req, res) => {
   try {
-    // Optional: Add admin authentication
+    console.log('[API] Deleting announcement by admin:', req.admin.username);
     
     await AnnouncementService.deleteAnnouncement(req.params.id);
     
@@ -262,9 +502,13 @@ app.delete('/api/announcements/:id', async (req, res) => {
     console.error('[API] DELETE announcement error:', error);
     
     if (error.message.includes('not found')) {
-      res.status(404).json({ error: 'Announcement not found' });
+      res.status(404).json({ 
+        success: false,
+        error: 'Announcement not found' 
+      });
     } else {
       res.status(500).json({ 
+        success: false,
         error: 'Failed to delete announcement',
         message: error.message 
       });
@@ -281,16 +525,11 @@ function generateTeamId() {
   return crypto.randomBytes(4).toString('hex').toUpperCase();
 }
 
-/**
- * Background processing function for Notion and email
- */
-
-
 // ============================================
 // REGISTRATION ENDPOINT WITH FILE UPLOAD
 // ============================================
 
-app.post('/api/register', upload.single('paymentProof'), (req, res) => {
+app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
   const startTime = Date.now();
   console.log('[REGISTER] Request received at:', new Date().toISOString());
   console.log('[REGISTER] Request body:', req.body);
@@ -340,6 +579,31 @@ app.post('/api/register', upload.single('paymentProof'), (req, res) => {
     return res.status(400).json({
       success: false,
       message: 'Payment proof screenshot is required'
+    });
+  }
+
+  // ✅ NEW: Check for duplicate team name
+  const teamNameCheck = await checkDuplicateTeamName(teamName);
+  if (teamNameCheck.isDuplicate) {
+    return res.status(409).json({
+      success: false,
+      field: 'teamName',
+      message: teamNameCheck.message
+    });
+  }
+
+  // ✅ NEW: Check for duplicate registration
+  const duplicateCheck = await checkDuplicateRegistration(
+    teamLeaderEmail, 
+    teamLeaderPhone, 
+    transactionId
+  );
+
+  if (duplicateCheck.isDuplicate) {
+    return res.status(409).json({
+      success: false,
+      field: duplicateCheck.field,
+      message: duplicateCheck.message
     });
   }
   
@@ -605,6 +869,17 @@ app.post('/api/clubregister', async (req, res) => {
     });
   }
 
+  // ✅ NEW: Check for duplicate member
+  const duplicateCheck = await checkDuplicateClubMember(email, rollno, cleanPhone);
+  
+  if (duplicateCheck.isDuplicate) {
+    return res.status(409).json({
+      success: false,
+      field: duplicateCheck.field,
+      message: duplicateCheck.message
+    });
+  }
+
   // Check if Notion is configured
   if (!process.env.NOTION_API_KEY) {
     console.error('[CLUB REGISTER] NOTION_API_KEY missing');
@@ -704,17 +979,7 @@ app.post('/api/clubregister', async (req, res) => {
       message: 'Registration successful! We will contact you soon.',
     });
 
-    // Optional: Send welcome email in background (if SendGrid is configured)
-    if (process.env.SENDGRID_API_KEY && process.env.SENDGRID_FROM_EMAIL) {
-      (async () => {
-        try {
-          await sendClubWelcomeEmail(email, name);
-          console.log('[CLUB REGISTER] Welcome email sent to:', email);
-        } catch (emailError) {
-          console.error('[CLUB REGISTER] Failed to send welcome email:', emailError.message);
-        }
-      })();
-    }
+    
 
   } catch (error) {
     console.error('[CLUB REGISTER] Error:', error);
@@ -750,7 +1015,6 @@ app.post('/api/clubregister', async (req, res) => {
     });
   }
 });
-
 // ============================================
 // HEALTH CHECK & TEST ENDPOINTS
 // ============================================
@@ -764,7 +1028,8 @@ app.get('/api/health', (req, res) => {
     port: PORT,
     config: {
       notion: !!process.env.NOTION_DATABASE_ID,
-      sendgrid: !!process.env.SENDGRID_API_KEY
+      jwt: !!process.env.JWT_SECRET,
+      admin: !!process.env.ADMIN_USERNAME && !!process.env.ADMIN_PASSWORD_HASH
     }
   });
 });
@@ -801,11 +1066,10 @@ app.listen(PORT, () => {
   console.log(`✅ Test endpoint: http://localhost:${PORT}/api/test`);
   console.log(`📝 Notion database: ${process.env.NOTION_DATABASE_ID ? 'Configured' : 'NOT CONFIGURED'}`);
   console.log(`🔑 Notion API key: ${process.env.NOTION_API_KEY ? 'Configured' : 'NOT CONFIGURED'}`);
-  console.log(`📧 SendGrid API key: ${process.env.SENDGRID_API_KEY ? 'Configured' : 'NOT CONFIGURED'}`);
+  console.log(`🔐 JWT Secret: ${process.env.JWT_SECRET ? 'Configured' : 'NOT CONFIGURED'}`);
+  console.log(`👤 Admin username: ${process.env.ADMIN_USERNAME ? 'Configured' : 'NOT CONFIGURED'}`);
+  console.log(`🔒 Admin password hash: ${process.env.ADMIN_PASSWORD_HASH ? 'Configured' : 'NOT CONFIGURED'}`);
   console.log('='.repeat(50));
-  
-  // Optional: Setup automated reminder emails (uncomment to enable)
-  // emailService.setupReminderCron('0 9 * * *'); // Daily at 9 AM
 });
 
 // Handle unhandled promise rejections
@@ -815,8 +1079,7 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received, stopping scheduled jobs...');
-  emailService.stopAllJobs();
+  console.log('SIGTERM received, shutting down gracefully...');
   process.exit(0);
 });
 

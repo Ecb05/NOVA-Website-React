@@ -1,2 +1,3 @@
 .env
-stress-test.js 
+stress-test.js
+generate-credentials-cli.js 
