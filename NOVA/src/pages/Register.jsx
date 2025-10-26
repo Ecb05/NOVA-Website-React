@@ -13,9 +13,10 @@ const Register = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [responseMessage, setResponseMessage] = useState(''); // ✅ NEW: Store server message
+  const [fieldErrors, setFieldErrors] = useState({}); // ✅ NEW: Store field-specific errors
 
   useEffect(() => {
-    // Initialize AOS if you're using it in your project
     if (window.AOS) {
       window.AOS.init({
         duration: 1000,
@@ -30,6 +31,15 @@ const Register = () => {
       ...prev,
       [name]: value
     }));
+    
+    // ✅ Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const handleCheckboxChange = (e) => {
@@ -46,6 +56,8 @@ const Register = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus(null);
+    setResponseMessage('');
+    setFieldErrors({});
 
     try {
       const response = await fetch('/api/clubregister', {
@@ -56,9 +68,13 @@ const Register = () => {
         body: JSON.stringify(formData)
       });
 
+      const data = await response.json(); // ✅ Always parse response
+
       if (response.ok) {
         setSubmitStatus('success');
-        // Reset form
+        setResponseMessage(data.message || 'Application submitted successfully!');
+        
+        // Reset form on success
         setFormData({
           name: '',
           rollno: '',
@@ -69,11 +85,19 @@ const Register = () => {
           message: ''
         });
       } else {
+        // ✅ Handle different error scenarios
         setSubmitStatus('error');
+        setResponseMessage(data.message || 'Something went wrong. Please try again.');
+        
+        // ✅ Handle field-specific errors (for duplicate checking)
+        if (data.field) {
+          setFieldErrors({ [data.field]: data.message });
+        }
       }
     } catch (error) {
       console.error('Error submitting form:', error);
       setSubmitStatus('error');
+      setResponseMessage('Network error. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -141,6 +165,10 @@ const Register = () => {
                 onChange={handleInputChange}
                 required
               />
+              {/* ✅ Show field-specific error */}
+              {fieldErrors.name && (
+                <span className="error-text">{fieldErrors.name}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -154,6 +182,10 @@ const Register = () => {
                 placeholder="e.g., 21B81A05J7"
                 required
               />
+              {/* ✅ Show field-specific error */}
+              {fieldErrors.rollno && (
+                <span className="error-text">{fieldErrors.rollno}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -166,6 +198,10 @@ const Register = () => {
                 onChange={handleInputChange}
                 required
               />
+              {/* ✅ Show field-specific error */}
+              {fieldErrors.email && (
+                <span className="error-text">{fieldErrors.email}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -179,6 +215,10 @@ const Register = () => {
                 placeholder="+91XXXXXXXXXX"
                 required
               />
+              {/* ✅ Show field-specific error */}
+              {fieldErrors.phone && (
+                <span className="error-text">{fieldErrors.phone}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -276,15 +316,16 @@ const Register = () => {
               />
             </div>
 
-            {submitStatus === 'success' && (
+            {/* ✅ Display server response message dynamically */}
+            {submitStatus === 'success' && responseMessage && (
               <div className="alert alert-success">
-                Application submitted successfully! We'll get back to you soon.
+                {responseMessage}
               </div>
             )}
 
-            {submitStatus === 'error' && (
+            {submitStatus === 'error' && responseMessage && (
               <div className="alert alert-error">
-                Something went wrong. Please try again later.
+                {responseMessage}
               </div>
             )}
 
