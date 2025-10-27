@@ -8,11 +8,13 @@ export const useSubmissionForm = (apiEndpoint = `${API_BASE_URL}/api/submit`) =>
   const [message, setMessage] = useState({ text: '', type: '' });
 
   const validateForm = (formData) => {
+    // Validate Team ID
     if (!formData.teamId) {
       setMessage({ text: 'Please enter your Team ID', type: 'error' });
       return false;
     }
 
+    // Validate Project URL
     if (!formData.projectUrl) {
       setMessage({ text: 'Please enter your Project URL', type: 'error' });
       return false;
@@ -22,6 +24,27 @@ export const useSubmissionForm = (apiEndpoint = `${API_BASE_URL}/api/submit`) =>
       new URL(formData.projectUrl);
     } catch (e) {
       setMessage({ text: 'Please enter a valid Project URL', type: 'error' });
+      return false;
+    }
+
+    // Validate Video Presentation URL
+    if (!formData.videoPresentationUrl) {
+      setMessage({ text: 'Please enter your Video Presentation URL', type: 'error' });
+      return false;
+    }
+
+    try {
+      const videoUrl = new URL(formData.videoPresentationUrl);
+      // Check if it's a Google Drive link
+      if (!videoUrl.hostname.includes('drive.google.com')) {
+        setMessage({ 
+          text: 'Please provide a valid Google Drive link for the video presentation', 
+          type: 'error' 
+        });
+        return false;
+      }
+    } catch (e) {
+      setMessage({ text: 'Please enter a valid Video Presentation URL', type: 'error' });
       return false;
     }
 
@@ -42,7 +65,8 @@ export const useSubmissionForm = (apiEndpoint = `${API_BASE_URL}/api/submit`) =>
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           submissionTeamId: formData.teamId,
-          projectUrl: formData.projectUrl
+          projectUrl: formData.projectUrl,
+          videoPresentationUrl: formData.videoPresentationUrl
         })
       });
 
@@ -54,8 +78,8 @@ export const useSubmissionForm = (apiEndpoint = `${API_BASE_URL}/api/submit`) =>
           type: 'success' 
         });
         setTimeout(() => {
-    setMessage({ text: '', type: '' });
-  }, 3000);
+          setMessage({ text: '', type: '' });
+        }, 3000);
         return { success: true };
       } else {
         throw new Error(result.message || 'Failed to submit project');

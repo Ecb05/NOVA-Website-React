@@ -6,7 +6,8 @@ const SubmissionModal = ({ isOpen, onClose }) => {
   
   const [formData, setFormData] = useState({
     teamId: '',
-    projectUrl: ''
+    projectUrl: '',
+    
   });
 
   const handleChange = (e) => {
