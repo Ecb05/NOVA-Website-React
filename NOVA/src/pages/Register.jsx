@@ -16,6 +16,8 @@ const Register = () => {
   const [responseMessage, setResponseMessage] = useState(''); // ✅ NEW: Store server message
   const [fieldErrors, setFieldErrors] = useState({}); // ✅ NEW: Store field-specific errors
 
+  const MAX_MESSAGE_LENGTH = 1000;
+
   useEffect(() => {
     if (window.AOS) {
       window.AOS.init({
@@ -24,6 +26,9 @@ const Register = () => {
       });
     }
   }, []);
+   if (name === 'message' && value.length > MAX_MESSAGE_LENGTH) {
+      return; // Don't update if exceeds limit
+    }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -102,6 +107,7 @@ const Register = () => {
       setIsSubmitting(false);
     }
   };
+  const remainingChars = MAX_MESSAGE_LENGTH - formData.message.length;
 
   return (
     <section className="register-page">
@@ -179,7 +185,7 @@ const Register = () => {
                 name="rollno"
                 value={formData.rollno}
                 onChange={handleInputChange}
-                placeholder="e.g., 21B81A05J7"
+                placeholder="e.g., 2451-xx-xxx-xxx"
                 required
               />
               {/* ✅ Show field-specific error */}
@@ -196,6 +202,7 @@ const Register = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
+                placeholder=' eg., 2451xxxxxxxx@mvsrec.edu.in'
                 required
               />
               {/* ✅ Show field-specific error */}
@@ -304,16 +311,36 @@ const Register = () => {
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="message">Why do you want to join NOVA?</label>
+           <div className="form-group">
+              <label htmlFor="message">
+                Why do you want to join NOVA?
+                <span className="char-counter" style={{
+                  float: 'right',
+                  fontSize: '0.85rem',
+                  color: remainingChars < 100 ? '#ff6b6b' : 'var(--gray-text)'
+                }}>
+                  {remainingChars} characters remaining
+                </span>
+              </label>
               <textarea
                 id="message"
                 name="message"
                 rows="4"
                 value={formData.message}
                 onChange={handleInputChange}
+                maxLength={MAX_MESSAGE_LENGTH}
                 required
               />
+              {remainingChars < 100 && (
+                <span style={{ 
+                  fontSize: '0.8rem', 
+                  color: '#ff9800',
+                  display: 'block',
+                  marginTop: '0.3rem'
+                }}>
+                  {remainingChars === 0 ? 'Maximum character limit reached' : 'Approaching character limit'}
+                </span>
+              )}
             </div>
 
             {/* ✅ Display server response message dynamically */}

@@ -293,7 +293,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
               {/* Payment Section */}
               <div className="payment-section">
                 <h3>Registration Fee Payment</h3>
-                <p className="payment-info">Registration fee: ₹500 per team</p>
+                <p className="payment-info">Registration fee: ₹99 per team</p>
                 
                 <button 
                   type="button" 

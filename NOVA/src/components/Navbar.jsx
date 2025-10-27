@@ -78,7 +78,7 @@ const Navbar = () => {
               className={`register-btn ${isActiveLink('/register') ? 'active' : ''}`}
               onClick={closeMenu}
             >
-              Register
+              Join us
             </Link>
           </li>
         </ul>
