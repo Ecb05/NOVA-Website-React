@@ -755,13 +755,14 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
 });
 
 // ============================================
-// SUBMISSION ENDPOINT
+// SUBMISSION ENDPOINT (UPDATED)
 // ============================================
 
 app.post('/api/submit', async (req, res) => {
   try {
-    const { submissionTeamId, projectUrl } = req.body;
+    const { submissionTeamId, projectUrl, videoPresentationUrl } = req.body;
 
+    // Validation
     if (!submissionTeamId || !projectUrl) {
       return res.status(400).json({
         success: false,
@@ -769,7 +770,23 @@ app.post('/api/submit', async (req, res) => {
       });
     }
 
-    //  USE CACHED DATA SOURCE ID
+    // Validate video presentation URL
+    if (!videoPresentationUrl) {
+      return res.status(400).json({
+        success: false,
+        message: 'Video Presentation URL is required'
+      });
+    }
+
+    // Optional: Validate it's a Google Drive link
+    if (!videoPresentationUrl.includes('drive.google.com')) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid Google Drive link for the video presentation'
+      });
+    }
+
+    // USE CACHED DATA SOURCE ID
     const dataSourceId = await getRegistrationDataSourceId();
 
     const response = await notion.request({
@@ -800,6 +817,7 @@ app.post('/api/submit', async (req, res) => {
       page_id: response.results[0].id,
       properties: {
         'Project URL': { url: projectUrl },
+        'Video Presentation URL': { url: videoPresentationUrl },
         'Submission Date': { date: { start: submissionDate } }
       }
     });
