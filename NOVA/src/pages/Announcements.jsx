@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+const API_BASE_URL = import.meta.env.VITE_API_URL
 const AnnouncementsPage = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +13,7 @@ const AnnouncementsPage = () => {
  const loadAnnouncements = async () => {
   setLoading(true);
   try {
-    const response = await fetch('/api/announcements');
+    const response = await fetch(`${API_BASE_URL}/api/announcements`);
     if (!response.ok) {
       throw new Error('Failed to fetch announcements');
     }
