@@ -26,3 +26,5 @@ dist-ssr
 .env.local
 .env.development
 .env.prodcution
+backend/generate-credentials-cli.js
+backend/stress-test.js
