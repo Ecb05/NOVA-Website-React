@@ -128,7 +128,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                   <span className="team-id-text">{teamId}</span>
                   <CopyButton code={teamId} />
                 </div>
-                <p>Please save this Team ID for future reference. We'll also send it to your team leader email.</p>
+                <p>Please save this Team ID for future reference. Contact us from footer if you loose it!</p>
                 
                 {/* WhatsApp Community Section */}
                 <div className="whatsapp-community">
