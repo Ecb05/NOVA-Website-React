@@ -312,22 +312,22 @@ const authenticateAdmin = (req, res, next) => {
 const app = express();
 
 // Determine environment
-const isDevelopment = process.env.NODE_ENV !== 'production';
+//const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Configure CORS
 app.use(cors({
-  origin: isDevelopment 
-    ? ['http://localhost:3000',
-    'http://localhost:4173',
+  origin: [
+    // Production domains
+    'https://thenova.club',
+    'https://www.thenova.club',
+    'https://nova-website-react-1.vercel.app',
+    'https://nova-website-react-1-*.vercel.app',
+    // Development - for testing
     'http://localhost:5173',
-    'http://127.0.0.1:5173'] 
-    : [
-        process.env.FRONTEND_URL,
-       'https://thenova.club',                      // ✅ Your custom domain
-        'https://www.thenova.club',                  // ✅ With www (if configured)
-        'https://nova-website-react-1.vercel.app',   // ✅ Your Vercel URL
-        'https://nova-website-react-1-*.vercel.app'  // ✅ Preview deployments
-      ],
+    'http://localhost:3000',
+    'http://localhost:4173',
+    'http://127.0.0.1:5173'
+  ],
   credentials: true
 }));
 
