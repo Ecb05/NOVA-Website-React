@@ -170,6 +170,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                   name="teamLeader"
                   value={formData.teamLeader}
                   onChange={handleChange}
+                  placeholder='MVSREC e-mail...'
                   required
                 />
                 {errors.teamLeader && <span className="error-text">{errors.teamLeader}</span>}

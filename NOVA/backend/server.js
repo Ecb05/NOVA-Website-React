@@ -125,6 +125,14 @@ function clearNotionCache() {
   console.log('[CACHE] Cache cleared');
 }
 
+//validate email 
+function isValidMVSRECEmail(email) {
+  if (!email || typeof email !== 'string') return false;
+  
+  const MVSREC_EMAIL_REGEX = /^2451\d{2}\d{3}\d{3}@mvsrec\.edu\.in$/;
+  
+  return MVSREC_EMAIL_REGEX.test(email.toLowerCase().trim());
+}
 
 /**
  * Check for duplicate registrations in Notion
@@ -867,12 +875,10 @@ app.post('/api/clubregister', async (req, res) => {
   }
 
   // Email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    console.log('[CLUB REGISTER] Validation failed - invalid email');
+   if (!isValidMVSRECEmail(teamLeaderEmail)) {
     return res.status(400).json({
       success: false,
-      message: 'Please provide a valid email address'
+      message: 'Please use your official MVSREC college email!'
     });
   }
 
