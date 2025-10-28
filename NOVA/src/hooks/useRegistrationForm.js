@@ -9,7 +9,7 @@ export const useRegistrationForm = (apiEndpoint = `${API_BASE_URL}/api/register`
   const [errors, setErrors] = useState({});
 
   const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^2451\d{2}\d{3}\d{3}@mvsrec\.edu\.in$/;
     return email && emailRegex.test(email);
   };
 
