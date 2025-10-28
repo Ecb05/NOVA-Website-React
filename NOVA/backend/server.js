@@ -572,6 +572,13 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
     });
   }
 
+   if (!isValidMVSRECEmail(teamLeaderEmail)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please use your official MVSREC college email!'
+    });
+  }
+
   // Validate transaction ID
   if (!transactionId || transactionId.trim().length < 5) {
     console.log('[REGISTER] Validation failed - invalid transaction ID');
@@ -875,7 +882,7 @@ app.post('/api/clubregister', async (req, res) => {
   }
 
   // Email validation
-   if (!isValidMVSRECEmail(teamLeaderEmail)) {
+   if (!isValidMVSRECEmail(email)) {
     return res.status(400).json({
       success: false,
       message: 'Please use your official MVSREC college email!'

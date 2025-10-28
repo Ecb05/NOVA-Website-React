@@ -7,7 +7,7 @@ const SubmissionModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     teamId: '',
     projectUrl: '',
-    
+    videoPresentationUrl: ''
   });
 
   const handleChange = (e) => {
@@ -20,7 +20,7 @@ const SubmissionModal = ({ isOpen, onClose }) => {
     const result = await submitProject(formData);
     
     if (result.success) {
-      setFormData({ teamId: '', projectUrl: '' });
+      setFormData({ teamId: '', projectUrl: '', videoPresentationUrl: '' });
       setTimeout(() => onClose(), 2000);
     }
   };
@@ -57,6 +57,29 @@ const SubmissionModal = ({ isOpen, onClose }) => {
               value={formData.projectUrl}
               onChange={handleChange}
               placeholder="https://yourproject.com"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="videoPresentationUrl">
+              Video Presentation URL (Google Drive)
+              <span style={{ 
+                fontSize: '0.85rem', 
+                color: 'var(--gray-text)', 
+                display: 'block',
+                marginTop: '0.3rem'
+              }}>
+                Share your video with "Anyone with the link" can view
+              </span>
+            </label>
+            <input
+              type="url"
+              id="videoPresentationUrl"
+              name="videoPresentationUrl"
+              value={formData.videoPresentationUrl}
+              onChange={handleChange}
+              placeholder="https://drive.google.com/file/d/..."
               required
             />
           </div>
