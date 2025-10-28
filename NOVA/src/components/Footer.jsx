@@ -24,7 +24,7 @@ const Footer = () => {
         
         <div className="footer-contact">
           <h3>Contact Us</h3>
-          <p><i className="fas fa-envelope"></i> info@novaclub.org</p>
+          <p><i className="fas fa-envelope"></i> novamvsr@gmail.com</p>
           <p><i className="fas fa-phone"></i> +91 9642200046</p>
           <p><i className="fas fa-map-marker-alt"></i> CSE Department, MVSR Engineering College</p>
         </div>

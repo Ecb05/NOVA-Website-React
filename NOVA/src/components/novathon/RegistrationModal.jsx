@@ -139,7 +139,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                   </div>
                   <p>Join our WhatsApp community for updates and announcements</p>
                   <a 
-                    href="https://chat.whatsapp.com/JUKfH38pORiFdejcsxXRFU?mode=wwt" 
+                    href="https://chat.whatsapp.com/LdB8kB3cw0cCAje5HTVHv0?mode=wwt" 
                     target="_blank" 
                     rel="noopener noreferrer"
                     className="whatsapp-join-btn"
