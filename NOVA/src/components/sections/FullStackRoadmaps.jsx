@@ -57,7 +57,7 @@ const FullStackRoadmap = () => {
                <div className="resource-link">Comming Soon</div>
             </div>
             <span className="timeline-duration">Week 4</span>
-            <span className="timeline-duration">Speaker : Ayush ( 4th Year - IT)</span>
+            <span className="timeline-duration">Speaker : Karthikeya ( 4th Year - IT)</span>
           </div>
         </div>
 
