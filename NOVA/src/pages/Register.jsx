@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+const API_URL = import.meta.env.VITE_API_URL
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -65,7 +65,7 @@ const Register = () => {
     setFieldErrors({});
 
     try {
-      const response = await fetch('/api/clubregister', {
+      const response = await fetch(`${API_URL}/api/clubregister`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
