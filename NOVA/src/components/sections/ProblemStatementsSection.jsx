@@ -1,6 +1,6 @@
 const ProblemStatementsSection = () => {
   return (
-    <section id="problem-statements" className="problem-statements-section">
+  <section id="problem-statements" className="problem-statements-section">
       <div className="container">
         <h1 className="section-title" data-aos="fade-up">Problem Statements</h1>
         <div className="problem-statements-container" data-aos="fade-up">
@@ -9,14 +9,22 @@ const ProblemStatementsSection = () => {
               <div className="announcement-icon">
                 <i className="fas fa-lightbulb"></i>
               </div>
-              <h2>Coming Soon!</h2>
+              <h2>Hackathon is Now Live!</h2>
               <p className="announcement-text">
-                Problem statements will be released on 1st November 2025.
+                Problem statements are now available!
               </p>
               <p className="announcement-details">
-                Stay tuned for exciting challenges that will test your creativity and technical skills.
-                The problems will be designed to push your development abilities to new heights.
+                Get ready for exciting challenges that will test your creativity and technical skills.
+                Click the button below to view all problem statements and start building your solution.
               </p>
+              <a 
+                href="https://drive.google.com/drive/folders/1ztfOecILj0IK7sNIK2RlpNHExtc4CgVO" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="ps-button"
+              >
+                <i className="fas fa-file-alt"></i> View Problem Statements
+              </a>
             </div>
           </div>
         </div>
