@@ -30,7 +30,7 @@ const RulesSection = () => {
           <div className="rules-section" data-aos="fade-up" data-aos-delay="300">
             <h2><i className="fas fa-clock"></i> Time Management</h2>
             <ul className="rules-list">
-              <li>Hackathon duration: 30 hours.</li>
+              <li>Hackathon duration: 70 hours.</li>
               <li>Plan tasks efficiently — no extra time will be provided.</li>
               <li>Keep backups and test frequently during development.</li>
               <li>Submit before the final deadline to avoid disqualification.</li>
