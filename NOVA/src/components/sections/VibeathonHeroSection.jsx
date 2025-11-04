@@ -19,7 +19,7 @@ const VibeathonHeroSection = ({ onScrollToSection }) => {
             onClick={() => onScrollToSection('countdown-section')} 
             className="vibe-btn secondary-btn"
           >
-            Register Now
+            Registrations are closed!
           </button>
         </div>
       </div>

@@ -769,11 +769,15 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
   })();
 });
 
+
 // ============================================
-// SUBMISSION ENDPOINT (UPDATED)
+// SUBMISSION ENDPOINT (OPTIMIZED FOR PEAK TRAFFIC)
 // ============================================
 
 app.post('/api/submit', async (req, res) => {
+  const startTime = Date.now();
+  console.log('[SUBMIT] Request received at:', new Date().toISOString());
+  
   try {
     const { submissionTeamId, projectUrl, videoPresentationUrl } = req.body;
 
@@ -793,7 +797,7 @@ app.post('/api/submit', async (req, res) => {
       });
     }
 
-    // Optional: Validate it's a Google Drive link
+    // Validate it's a Google Drive link
     if (!videoPresentationUrl.includes('drive.google.com')) {
       return res.status(400).json({
         success: false,
@@ -804,56 +808,112 @@ app.post('/api/submit', async (req, res) => {
     // USE CACHED DATA SOURCE ID
     const dataSourceId = await getRegistrationDataSourceId();
 
-    const response = await notion.request({
-      path: `data_sources/${dataSourceId}/query`,
-      method: 'POST',
-      body: {
-        filter: {
-          and: [
-            { property: 'Team ID', rich_text: { equals: submissionTeamId } },
-            { or: [
+    // Create a timeout promise (25 seconds)
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('REQUEST_TIMEOUT')), 25000)
+    );
+
+    // Create the submission promise
+    const submissionPromise = (async () => {
+      // Query for the team
+      const response = await notion.request({
+        path: `data_sources/${dataSourceId}/query`,
+        method: 'POST',
+        body: {
+          filter: {
+            and: [
+              { property: 'Team ID', rich_text: { equals: submissionTeamId } },
+              { or: [
                 { property: 'Status', select: { equals: 'Active' } },
                 { property: 'Status', select: { equals: 'Pending Verification' } }
-            ]}
-          ]
+              ]}
+            ]
+          }
         }
+      });
+
+      if (response.results.length === 0) {
+        throw new Error('TEAM_NOT_FOUND');
       }
+
+      // Update the Notion page
+      const submissionDate = new Date().toISOString();
+      await notion.pages.update({
+        page_id: response.results[0].id,
+        properties: {
+          'Project URL': { url: projectUrl },
+          'Video Presentation URL': { url: videoPresentationUrl },
+          'Submission Date': { date: { start: submissionDate } }
+        }
+      });
+
+      return { success: true, pageId: response.results[0].id };
+    })();
+
+    // Race between submission and timeout
+    const result = await Promise.race([submissionPromise, timeoutPromise]);
+
+    const elapsed = Date.now() - startTime;
+    console.log(`[SUBMIT] ✅ Success for team ${submissionTeamId} in ${elapsed}ms`);
+
+    res.json({ 
+      success: true, 
+      message: 'Project submitted successfully!',
+      teamId: submissionTeamId
     });
 
-    if (response.results.length === 0) {
-      return res.status(404).json({
+  } catch (error) {
+    const elapsed = Date.now() - startTime;
+    console.error(`[SUBMIT] ❌ Error after ${elapsed}ms:`, error.message);
+
+    // Handle timeout errors
+    if (error.message === 'REQUEST_TIMEOUT') {
+      console.log('[SUBMIT] Request timed out for team:', req.body.submissionTeamId);
+      return res.status(504).json({
         success: false,
-        message: 'Team not found or not active'
+        message: 'Submission is taking longer than expected. Please wait 1 minute and try submitting again. If you see your project in the submissions list, it was successful.',
+        timeout: true
       });
     }
 
-    const submissionDate = new Date().toISOString();
-    await notion.pages.update({
-      page_id: response.results[0].id,
-      properties: {
-        'Project URL': { url: projectUrl },
-        'Video Presentation URL': { url: videoPresentationUrl },
-        'Submission Date': { date: { start: submissionDate } }
-      }
-    });
+    // Handle team not found
+    if (error.message === 'TEAM_NOT_FOUND') {
+      return res.status(404).json({
+        success: false,
+        message: 'Team not found or not active. Please check your Team ID and ensure your registration was approved.'
+      });
+    }
 
-    res.json({ success: true, message: 'Project submitted successfully!' });
-
-  } catch (error) {
-    console.error('[SUBMIT] Error:', error);
-    
-    // Clear cache on errors
+    // Clear cache on object not found errors
     if (error.code === 'object_not_found' || error.status === 404) {
+      console.log('[SUBMIT] Clearing cache due to object not found error');
       clearNotionCache();
     }
-    
+
+    // Handle Notion API errors
+    if (error.code === 'validation_error') {
+      console.error('[SUBMIT] Notion validation error:', error.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Invalid submission data. Please check your URLs and try again.'
+      });
+    }
+
+    if (error.status === 401) {
+      console.error('[SUBMIT] Notion authentication failed');
+      return res.status(500).json({
+        success: false,
+        message: 'Server authentication error. Please contact support.'
+      });
+    }
+
+    // Generic error
     res.status(500).json({
       success: false,
-      message: 'Submission failed. Please try again.'
+      message: 'Submission failed. Please try again in a few moments.'
     });
   }
 });
-
 // ============================================
 // CLUB MEMBERSHIP REGISTRATION ENDPOINT
 // ============================================
