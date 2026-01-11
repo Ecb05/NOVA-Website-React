@@ -12,22 +12,7 @@ const Novathon = () => {
   return (
     <>
       <VibeathonHeroSection />
-      <CountdownSection 
-        onOpenRegistration={() => {
-         
-          setShowRegistration(true)}}
-        onOpenSubmission={() => setShowSubmission(true)}
-      />
-      <RegistrationModal 
-        isOpen={showRegistration} 
-        onClose={() => setShowRegistration(false)} 
-      />
-        <SubmissionModal 
-        isOpen={showSubmission} 
-        onClose={() => setShowSubmission(false)} 
-      />
       
-     <RulesSection />
     </>
   );
 };
