@@ -5,6 +5,7 @@ import SubmissionModal from '../components/novathon/SubmissionModal';
 import RulesSection from '../components/sections/RulesSection';
 import ProblemStatementsSection from '../components/sections/ProblemStatementsSection';
 import VibeathonHeroSection from '../components/sections/VibeathonHeroSection';
+import TestimonialsSection from '../components/sections/TestimonialsSection';
 
 const Novathon = () => {
   const [showRegistration, setShowRegistration] = useState(false);
@@ -29,17 +30,18 @@ const Novathon = () => {
           setShowRegistration(true)}}
         onOpenSubmission={() => setShowSubmission(true)}
       />**/}
-      <RegistrationModal 
-        isOpen={showRegistration} 
-        onClose={() => setShowRegistration(false)} 
+      <RegistrationModal
+        isOpen={showRegistration}
+        onClose={() => setShowRegistration(false)}
       />
-        <SubmissionModal 
-        isOpen={showSubmission} 
-        onClose={() => setShowSubmission(false)} 
+      <SubmissionModal
+        isOpen={showSubmission}
+        onClose={() => setShowSubmission(false)}
       />
-      
-     <RulesSection />
-     <ProblemStatementsSection />
+
+      <RulesSection />
+      <ProblemStatementsSection />
+      <TestimonialsSection />
     </>
   );
 };

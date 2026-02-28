@@ -5,7 +5,7 @@ import Footer from './components/Footer';
 import ParticlesBackground from './components/ParticlesBackground';
 import Home from './pages/Home';
 import AdminPanel from './admin/AdminPanel';
-import Announcements from './pages/Announcements';
+import Events from './pages/Events';
 import Novathon from './pages/Novathon';
 import Register from './pages/Register';
 import Sprints from './pages/Sprints';
@@ -20,17 +20,17 @@ const Rules = () => <div>Rules Page</div>;
 function App() {
   return (
     <Router>
-      
-      
-      <div className = "App">
+
+
+      <div className="App">
         <Navbar />
         <ParticlesBackground />
-       
-         
+
+
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/announcements" element={<Announcements />} />
+            <Route path="/events" element={<Events />} />
             <Route path="/sprints" element={<Sprints />} />
             <Route path="/novathon" element={<Novathon />} />
             <Route path="/rules" element={<Rules />} />
@@ -38,9 +38,9 @@ function App() {
             <Route path="/admin" element={<AdminPanel />} />
           </Routes>
         </main>
-      
+
         <Footer />
-      
+
 
       </div>
     </Router>

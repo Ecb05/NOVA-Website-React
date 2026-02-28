@@ -10,7 +10,7 @@ const Navbar = () => {
   };
 
   const closeMenu = () => {
-    setIsMenuOpen(false); 
+    setIsMenuOpen(false);
   };
 
   // Helper function to check if link is active
@@ -18,7 +18,7 @@ const Navbar = () => {
     return location.pathname === path;
   };
 
- 
+
 
   return (
     <nav className="navbar">
@@ -29,33 +29,33 @@ const Navbar = () => {
           <span className="tagline">Network of Visionary Aspirants</span>
         </div>
       </div>
-      
+
       <div className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
         <ul>
           <li>
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               className={isActiveLink('/') ? 'active' : ''}
               onClick={closeMenu}
             >
               Home
             </Link>
           </li>
-        
-         
-        
+
+
+
           <li>
-            <Link 
-              to="/announcements" 
-              className={isActiveLink('/announcements') ? 'active' : ''}
+            <Link
+              to="/events"
+              className={isActiveLink('/events') ? 'active' : ''}
               onClick={closeMenu}
             >
-              Announcements
+              Events
             </Link>
           </li>
           <li>
-            <Link 
-              to="/sprints" 
+            <Link
+              to="/sprints"
               className={isActiveLink('/sprints') ? 'active' : ''}
               onClick={closeMenu}
             >
@@ -63,18 +63,18 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link 
-              to="/novathon" 
+            <Link
+              to="/novathon"
               className={isActiveLink('/novathon') ? 'active' : ''}
               onClick={closeMenu}
             >
               Novathon
             </Link>
           </li>
-         
+
           <li>
-            <Link 
-              to="/register" 
+            <Link
+              to="/register"
               className={`register-btn ${isActiveLink('/register') ? 'active' : ''}`}
               onClick={closeMenu}
             >
@@ -83,7 +83,7 @@ const Navbar = () => {
           </li>
         </ul>
       </div>
-      
+
       <div className="hamburger" onClick={toggleMenu}>
         <span className="bar"></span>
         <span className="bar"></span>
