@@ -1,13 +1,19 @@
 import React from 'react';
+import ParticlesBackground from '../ParticlesBackground';
 
 const FullStackRoadmap = () => {
   return (
     <section className="detailed-roadmap mern-roadmap" id="mern-roadmap">
+      <ParticlesBackground
+        id="particles-detailed-roadmap"
+        particleColors={['#3B82F6', '#60A5FA', '#93C5FD']}
+        lineColor="#3B82F6"
+      />
       <div className="section-header" data-aos="fade-up">
         <h2><i className="fab fa-js-square"></i> <span className="highlight">FullStack</span> Web Development Roadmap</h2>
         <p>GitHub • React • Flask & Fast API • DataBase • Deployment</p>
       </div>
-      
+
       <div className="roadmap-timeline">
         <div className="timeline-item" data-aos="fade-right" data-aos-delay="100">
           <div className="timeline-marker">1</div>
@@ -23,7 +29,7 @@ const FullStackRoadmap = () => {
             <span className="timeline-duration">Speaker : Lalith ( 4th Year - CSE)</span>
           </div>
         </div>
-        
+
         <div className="timeline-item" data-aos="fade-left" data-aos-delay="200">
           <div className="timeline-marker">2</div>
           <div className="timeline-content">
@@ -38,7 +44,7 @@ const FullStackRoadmap = () => {
             <span className="timeline-duration">Speaker : Ayush ( 4th Year - IT)</span>
           </div>
         </div>
-        
+
         <div className="timeline-item" data-aos="fade-right" data-aos-delay="300">
           <div className="timeline-marker">3</div>
           <div className="timeline-content">
@@ -53,7 +59,7 @@ const FullStackRoadmap = () => {
             <span className="timeline-duration">Speaker : Karthikeya ( 4th Year - IT)</span>
           </div>
         </div>
-        
+
         <div className="timeline-item" data-aos="fade-left" data-aos-delay="400">
           <div className="timeline-marker">4</div>
           <div className="timeline-content">

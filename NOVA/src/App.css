@@ -1,25 +1,30 @@
 /* ===== GLOBAL STYLES ===== */
 :root {
     /* Color Variables - Purple and blue theme */
-    --primary-color: #8a2be2;
+    --primary-color: #00A8A8;
     /* Purple */
-    --secondary-color: #4169e1;
+    --secondary-color: #00C896;
     /* Royal Blue */
-    --accent-color: #1e90ff;
+    --accent-color: #1DE9B6;
     /* Dodger Blue */
     --dark-bg: #121212;
-    /* Very dark gray, almost black */
     --darker-bg: #000000;
-    /* Pure black */
-    --light-text: #ffffff;
-    /* White */
-    --gray-text: #cccccc;
-    /* Light gray */
-    --card-bg: rgba(18, 18, 18, 0.8);
-    /* Dark gray with opacity */
-    --gradient-1: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    --gradient-2: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
-    --gradient-3: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    --light-text: #E6EDF3;
+    --gray-text: #9CA3AF;
+    --card-bg: rgba(255, 255, 255, 0.05);
+
+    /* New Section Bold Colors with 85% opacity to show particles */
+    --bg-hero: rgba(46, 139, 87, 0.85);
+    --bg-vision: rgba(114, 47, 55, 0.85);
+    --bg-mission: rgba(184, 134, 11, 0.85);
+    --bg-team: rgba(0, 128, 128, 0.85);
+    --bg-about: rgba(75, 0, 130, 0.85);
+    --bg-sprints: rgba(139, 0, 139, 0.85);
+    --bg-register: rgba(210, 105, 30, 0.85);
+    --solid-accent: #ffffff;
+    --gradient-1: #ffffff;
+    --gradient-2: #ffffff;
+    --gradient-3: #ffffff;
 
     /* Fluid type scale */
     --fs-xs: clamp(0.75rem, 0.68rem + 0.3vw, 0.875rem);
@@ -227,7 +232,7 @@ button,
 .underline {
     width: 80px;
     height: 4px;
-    background: var(--gradient-1);
+    background: var(--solid-accent);
     margin: 0 auto;
     border-radius: 2px;
 }
@@ -245,62 +250,52 @@ button,
 }
 
 .primary-btn {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: white;
-    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+    background: var(--light-text);
+    color: #000;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .primary-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(138, 43, 226, 0.6);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .secondary-btn {
     background: transparent;
     color: var(--light-text);
-    border: 2px solid var(--secondary-color);
+    border: 2px solid var(--light-text);
 }
 
 .secondary-btn:hover {
-    background: var(--secondary-color);
-    color: white;
+    background: var(--light-text);
+    color: #000;
     transform: translateY(-3px);
 }
 
 /* ===== NAVBAR ===== */
-header {
+.navbar {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    z-index: 1000;
-    transition: all 0.3s ease;
-    padding: 15px 0;
-    background: rgba(10, 10, 10, 0.8);
-    backdrop-filter: blur(10px);
-}
-
-.navbar {
-    position: sticky;
-    top: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 25px;
     padding-left: 50px;
     width: 100%;
+    max-height: 100px;
     margin: 0 auto;
     z-index: 1000;
-    background: rgba(21, 13, 44, 0.85);
-    backdrop-filter: blur(15px) brightness(0.9);
-    -webkit-backdrop-filter: blur(15px) brightness(0.9);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+    background: rgba(10, 10, 10, 0.6);
+    backdrop-filter: blur(12px) brightness(0.8);
+    -webkit-backdrop-filter: blur(12px) brightness(0.8);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .navbar:hover {
-    background: rgba(10, 10, 10, 0.92);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55);
+    background: rgba(10, 10, 10, 0.8);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
 }
 
 .logo {
@@ -315,13 +310,13 @@ header {
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--secondary-color);
-    box-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+    box-shadow: 0 0 10px rgba(0, 200, 150, 0.6);
     transition: all 0.3s ease;
 }
 
 .logo:hover .logo-image {
     transform: rotate(360deg);
-    box-shadow: 0 0 15px rgba(138, 43, 226, 0.8);
+    box-shadow: 0 0 15px rgba(0, 200, 150, 0.6);
 }
 
 .logo-text {
@@ -394,7 +389,7 @@ header {
 
 .register-btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+    box-shadow: 0 5px 15px rgba(0, 200, 150, 0.6);
 }
 
 .hamburger {
@@ -473,15 +468,31 @@ header {
 }
 
 /* ===== HERO SECTION ===== */
+@keyframes heroGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 .hero {
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: var(--container-padding);
-    /*padding-top: 10px;*/
-    max-width: 1400px;
+    max-width: 100%;
     margin: 0 auto;
+    background: linear-gradient(135deg, #05070A, #0B2F2A, #1A1B3A);
+    background-size: 400% 400%;
+    animation: heroGradient 12s ease infinite;
 }
 
 .hero-content {
@@ -493,15 +504,15 @@ header {
 
 @keyframes pulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(138, 43, 226, 0.7);
+        box-shadow: 0 0 0 0 rgba(0, 200, 150, 0.6);
     }
 
     70% {
-        box-shadow: 0 0 0 15px rgba(138, 43, 226, 0);
+        box-shadow: 0 0 0 15px rgba(0, 200, 150, 0.6);
     }
 
     100% {
-        box-shadow: 0 0 0 0 rgba(138, 43, 226, 0);
+        box-shadow: 0 0 0 0 rgba(0, 200, 150, 0.6);
     }
 }
 
@@ -545,60 +556,18 @@ header {
 /* ===== VISION SECTION ===== */
 .vision {
     padding: var(--section-padding);
-    background: var(--darker-bg);
+    background: linear-gradient(135deg, #1A0A0A, #5F1A1A, #2A0D0D);
     position: relative;
     overflow: hidden;
 }
 
-.vision::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at top right, rgba(138, 43, 226, 0.1), transparent 60%);
-    z-index: 0;
-}
+/* Legacy .vision-banner replaced by Python append */
 
-.vision-banner {
-    max-width: 900px;
-    margin: 0 auto 50px;
-    padding: var(--container-padding);
-    position: relative;
-    border-radius: 15px;
-    overflow: hidden;
-    height: clamp(140px, 24vw, 220px);
-}
+/* Legacy .vision-banner img removed */
 
-.vision-banner img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 15px;
-    filter: brightness(0.7);
-}
+/* Legacy .vision-overlay removed */
 
-.vision-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 15px;
-}
-
-.vision-overlay h3 {
-    font-size: 1.8rem;
-    color: var(--light-text);
-    text-align: center;
-    padding: 0 20px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
+/* Legacy .vision-overlay h3 removed */
 
 .vision-container {
     display: grid;
@@ -637,7 +606,7 @@ header {
 
 .vision-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 10px 30px rgba(138, 43, 226, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 200, 150, 0.6);
     border-color: var(--secondary-color);
     background: rgba(30, 30, 30, 0.8);
 }
@@ -652,13 +621,13 @@ header {
     margin: 0 auto 25px;
     background: var(--gradient-1);
     font-size: 2.2rem;
-    box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 200, 150, 0.6);
     transition: all 0.3s ease;
 }
 
 .vision-card:hover .vision-icon {
     transform: scale(1.1) rotate(10deg);
-    box-shadow: 0 15px 30px rgba(138, 43, 226, 0.5);
+    box-shadow: 0 15px 30px rgba(0, 200, 150, 0.6);
 }
 
 .vision-card h3 {
@@ -688,14 +657,9 @@ header {
         padding: var(--section-padding);
     }
 
-    .vision-banner {
-        margin: 0 auto 24px;
-    }
+    /* Legacy .vision-banner replaced by Python append */
 
-    .vision-overlay h3 {
-        font-size: clamp(1rem, 4.5vw, 1.25rem);
-        padding: 0 12px;
-    }
+    /* Legacy .vision-overlay h3 removed */
 
     .vision-container {
         gap: clamp(12px, 3.5vw, 20px);
@@ -722,20 +686,9 @@ header {
 /* ===== MISSION SECTION ===== */
 .mission {
     padding: var(--section-padding);
-    background: var(--dark-bg);
+    background: linear-gradient(135deg, #1A1405, #6B4F1D, #2A200A);
     position: relative;
     overflow: hidden;
-}
-
-.mission::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at bottom left, rgba(65, 105, 225, 0.1), transparent 60%);
-    z-index: 0;
 }
 
 .mission-container {
@@ -768,7 +721,7 @@ header {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0, 200, 150, 0.6), transparent);
     transition: left 0.6s ease;
 }
 
@@ -778,7 +731,7 @@ header {
 
 .mission-card:hover {
     transform: translateY(-15px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(138, 43, 226, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 200, 150, 0.6);
     border-color: var(--secondary-color);
     background: rgba(30, 30, 30, 0.9);
 }
@@ -794,7 +747,7 @@ header {
     background: var(--gradient-2);
     font-size: 2.5rem;
     color: white;
-    box-shadow: 0 10px 25px rgba(138, 43, 226, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 200, 150, 0.6);
     transition: all 0.4s ease;
     position: relative;
     z-index: 1;
@@ -802,7 +755,7 @@ header {
 
 .mission-card:hover .mission-icon {
     transform: scale(1.15) rotate(360deg);
-    box-shadow: 0 15px 35px rgba(138, 43, 226, 0.3);
+    box-shadow: 0 15px 35px rgba(0, 200, 150, 0.6);
 }
 
 .mission-card h3 {
@@ -842,8 +795,8 @@ header {
     width: 100%;
     height: 100%;
     background:
-        radial-gradient(circle at 20% 80%, rgba(30, 144, 255, 0.1), transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(138, 43, 226, 0.1), transparent 50%);
+        radial-gradient(circle at 20% 80%, rgba(0, 200, 150, 0.6), transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(0, 200, 150, 0.6), transparent 50%);
     z-index: 0;
 }
 
@@ -888,7 +841,7 @@ header {
 
 .value-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(30, 144, 255, 0.2);
+    box-shadow: 0 15px 30px rgba(0, 200, 150, 0.6);
     border-color: var(--accent-color);
     background: rgba(25, 25, 25, 0.9);
 }
@@ -904,13 +857,13 @@ header {
     background: var(--gradient-3);
     font-size: 2rem;
     color: white;
-    box-shadow: 0 8px 20px rgba(30, 144, 255, 0.3);
+    box-shadow: 0 8px 20px rgba(0, 200, 150, 0.6);
     transition: all 0.3s ease;
 }
 
 .value-card:hover .value-icon {
     transform: scale(1.1) rotateY(180deg);
-    box-shadow: 0 12px 25px rgba(30, 144, 255, 0.5);
+    box-shadow: 0 12px 25px rgba(0, 200, 150, 0.6);
 }
 
 .value-card h3 {
@@ -934,24 +887,9 @@ header {
     max-width: 100%;
     margin: 0 auto;
     padding: 120px 0;
-    background: linear-gradient(to bottom, var(--darker-bg) 0%, var(--bg-color) 15%, var(--bg-color) 85%, var(--darker-bg) 100%);
+    background: linear-gradient(135deg, #04161A, #0A4F5F, #062126);
     position: relative;
     overflow: hidden;
-}
-
-.team::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image:
-        radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.02) 1%, transparent 1%),
-        radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.02) 1%, transparent 1%);
-    background-size: 60px 60px;
-    opacity: 0.5;
-    z-index: 0;
 }
 
 .team .section-header,
@@ -1027,13 +965,13 @@ header {
 
 .team-member:hover {
     transform: translateY(-8px);
-    box-shadow: 0 10px 25px rgba(138, 43, 226, 0.3);
-    border-color: rgba(65, 105, 225, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 200, 150, 0.6);
+    border-color: rgba(0, 200, 150, 0.6);
 }
 
 .team-member:hover .member-image {
     transform: scale(1.05);
-    box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+    box-shadow: 0 0 20px rgba(0, 200, 150, 0.6);
 }
 
 .member-image {
@@ -1084,20 +1022,9 @@ header {
 /* ===== ABOUT SECTION ===== */
 .about {
     padding: var(--section-padding);
-    background: var(--darker-bg);
+    background: linear-gradient(135deg, #14041A, #4B0A5F, #1F0626);
     position: relative;
     overflow: hidden;
-}
-
-.about::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at bottom left, rgba(0, 191, 255, 0.1), transparent 60%);
-    z-index: 0;
 }
 
 .about-content {
@@ -1132,7 +1059,7 @@ header {
 
 .about-image img:hover {
     transform: scale(1.03);
-    box-shadow: 0 15px 35px rgba(138, 43, 226, 0.4);
+    box-shadow: 0 15px 35px rgba(0, 200, 150, 0.6);
 }
 
 .about-image-grid {
@@ -1152,7 +1079,7 @@ header {
 
 .about-image-grid img:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 200, 150, 0.6);
 }
 
 .about-gallery {
@@ -1264,7 +1191,7 @@ header {
     right: 0;
     width: 300px;
     height: 300px;
-    background: radial-gradient(circle, rgba(138, 43, 226, 0.1), transparent 70%);
+    /*background: radial-gradient(circle, rgba(0, 200, 150, 0.6), transparent 70%);*/
     z-index: 0;
 }
 
@@ -1300,7 +1227,7 @@ header {
 
 .announcement-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 10px 30px rgba(138, 43, 226, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 200, 150, 0.6);
     border-color: var(--secondary-color);
     background: rgba(30, 30, 30, 0.8);
 }
@@ -1315,17 +1242,17 @@ header {
     margin: 0 auto 15px;
     background: var(--gradient-1);
     font-size: 2.2rem;
-    box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 200, 150, 0.6);
     transition: all 0.3s ease;
 }
 
 .announcement-card:hover .announcement-icon {
     transform: scale(1.1) rotate(10deg);
-    box-shadow: 0 15px 30px rgba(138, 43, 226, 0.5);
+    box-shadow: 0 15px 30px rgba(0, 200, 150, 0.6);
 }
 
 .announcement-date {
-    background: rgba(138, 43, 226, 0.1);
+    background: rgba(0, 200, 150, 0.6);
     border-radius: 20px;
     padding: 5px 15px;
     margin-bottom: 15px;
@@ -1961,9 +1888,7 @@ footer::before {
         justify-content: center;
     }
 
-    .vision-overlay h3 {
-        font-size: 1.8rem;
-    }
+    /* Legacy .vision-overlay h3 removed */
 
     .about-container {
         flex-direction: column;
@@ -2092,13 +2017,9 @@ footer::before {
         width: 100%;
     }
 
-    .vision-overlay h3 {
-        font-size: 1.5rem;
-    }
+    /* Legacy .vision-overlay h3 removed */
 
-    .vision-banner {
-        height: 180px;
-    }
+    /* Legacy .vision-banner replaced by Python append */
 
     .about-image-grid {
         grid-template-columns: 1fr;
@@ -2578,8 +2499,8 @@ footer::before {
     width: 100%;
     height: 100%;
     background:
-        radial-gradient(circle at 30% 70%, rgba(138, 43, 226, 0.15), transparent 50%),
-        radial-gradient(circle at 70% 30%, rgba(30, 144, 255, 0.15), transparent 50%);
+        radial-gradient(circle at 30% 70%, rgba(0, 200, 150, 0.6), transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(0, 200, 150, 0.6), transparent 50%);
     z-index: -1;
 }
 
@@ -2661,7 +2582,7 @@ footer::before {
 
 .overview-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(138, 43, 226, 0.2);
+    box-shadow: 0 15px 30px rgba(0, 200, 150, 0.6);
     border-color: var(--secondary-color);
 }
 
@@ -2676,7 +2597,7 @@ footer::before {
     background: var(--gradient-1);
     font-size: 2rem;
     color: white;
-    box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 200, 150, 0.6);
 }
 
 .overview-card h3 {
@@ -2716,7 +2637,7 @@ footer::before {
 
 .highlight-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 12px 25px rgba(30, 144, 255, 0.2);
+    box-shadow: 0 12px 25px rgba(0, 200, 150, 0.6);
     border-color: var(--accent-color);
 }
 
@@ -2731,7 +2652,7 @@ footer::before {
     background: var(--gradient-2);
     font-size: 1.8rem;
     color: white;
-    box-shadow: 0 8px 15px rgba(65, 105, 225, 0.3);
+    box-shadow: 0 8px 15px rgba(0, 200, 150, 0.6);
 }
 
 .highlight-card h3 {
@@ -2778,7 +2699,7 @@ footer::before {
     background: var(--gradient-3);
     font-size: 2.5rem;
     color: white;
-    box-shadow: 0 15px 30px rgba(30, 144, 255, 0.4);
+    box-shadow: 0 15px 30px rgba(0, 200, 150, 0.6);
 }
 
 .register-card h3 {
@@ -2875,7 +2796,7 @@ footer::before {
 
 .social-follow .social-icon:hover {
     transform: translateY(-3px) scale(1.1);
-    box-shadow: 0 8px 15px rgba(138, 43, 226, 0.4);
+    box-shadow: 0 8px 15px rgba(0, 200, 150, 0.6);
 }
 
 /* ===== ROADMAPS SECTIONS ===== */
@@ -2893,7 +2814,7 @@ footer::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at center, rgba(138, 43, 226, 0.1), transparent 60%);
+    background: radial-gradient(circle at center, rgba(0, 200, 150, 0.6), transparent 60%);
     z-index: 0;
 }
 
@@ -2927,7 +2848,7 @@ footer::before {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0, 200, 150, 0.6), transparent);
     transition: left 0.6s ease;
 }
 
@@ -2937,7 +2858,7 @@ footer::before {
 
 .roadmap-card:hover {
     transform: translateY(-15px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(138, 43, 226, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 200, 150, 0.6);
     border-color: var(--secondary-color);
     background: rgba(30, 30, 30, 0.9);
 }
@@ -2953,7 +2874,7 @@ footer::before {
     background: var(--gradient-1);
     font-size: 2.5rem;
     color: white;
-    box-shadow: 0 10px 25px rgba(138, 43, 226, 0.4);
+    box-shadow: 0 10px 25px rgba(0, 200, 150, 0.6);
     transition: all 0.4s ease;
     position: relative;
     z-index: 1;
@@ -2961,7 +2882,7 @@ footer::before {
 
 .roadmap-card:hover .roadmap-icon {
     transform: scale(1.15) rotate(360deg);
-    box-shadow: 0 15px 35px rgba(138, 43, 226, 0.6);
+    box-shadow: 0 15px 35px rgba(0, 200, 150, 0.6);
 }
 
 .roadmap-card h3 {
@@ -3024,8 +2945,8 @@ footer::before {
     width: 100%;
     height: 100%;
     background:
-        radial-gradient(circle at 30% 70%, rgba(138, 43, 226, 0.15), transparent 50%),
-        radial-gradient(circle at 70% 30%, rgba(30, 144, 255, 0.15), transparent 50%);
+        radial-gradient(circle at 30% 70%, rgba(0, 200, 150, 0.6), transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(0, 200, 150, 0.6), transparent 50%);
     z-index: -1;
 }
 
@@ -3089,7 +3010,7 @@ footer::before {
     left: 50%;
     transform: translateX(-50%);
     z-index: 2;
-    box-shadow: 0 10px 20px rgba(138, 43, 226, 0.4);
+    box-shadow: 0 10px 20px rgba(0, 200, 150, 0.6);
 }
 
 .timeline-content {
@@ -3115,7 +3036,7 @@ footer::before {
 
 .timeline-content:hover {
     transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(138, 43, 226, 0.2);
+    box-shadow: 0 15px 30px rgba(0, 200, 150, 0.6);
     border-color: var(--secondary-color);
 }
 
@@ -3152,11 +3073,11 @@ footer::before {
     transition: all 0.3s ease;
     padding: 8px 12px;
     border-radius: 8px;
-    background: rgba(65, 105, 225, 0.1);
+    background: rgba(0, 200, 150, 0.6);
 }
 
 .resource-link:hover {
-    background: rgba(65, 105, 225, 0.2);
+    background: rgba(0, 200, 150, 0.6);
     transform: translateX(5px);
     color: var(--accent-color);
 }
@@ -3215,16 +3136,16 @@ footer::before {
 .roadmap-btn:hover {
     transform: translateY(-5px);
     border-color: var(--secondary-color);
-    background: rgba(138, 43, 226, 0.1);
+    background: rgba(0, 200, 150, 0.6);
     color: var(--light-text);
-    box-shadow: 0 10px 25px rgba(138, 43, 226, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 200, 150, 0.6);
 }
 
 .roadmap-btn.active {
     border-color: var(--secondary-color);
     background: var(--gradient-1);
     color: white;
-    box-shadow: 0 10px 25px rgba(138, 43, 226, 0.4);
+    box-shadow: 0 10px 25px rgba(0, 200, 150, 0.6);
     transform: translateY(-3px);
 }
 
@@ -3356,13 +3277,13 @@ footer::before {
 
 .submit-btn {
     background: linear-gradient(90deg, #271b5a, #168ba8);
-    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+    box-shadow: 0 5px 15px rgba(0, 200, 150, 0.6);
     color: white;
 }
 
 .register-btn {
     background: linear-gradient(90deg, #271b5a, #cc6607);
-    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+    box-shadow: 0 5px 15px rgba(0, 200, 150, 0.6);
     color: var(--primary-color);
 }
 
@@ -3732,7 +3653,7 @@ body.modal-open {
 
 .vibe-btn.secondary-btn {
     background: linear-gradient(90deg, #271b5a, #cc6607);
-    box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+    box-shadow: 0 5px 15px rgba(0, 200, 150, 0.6);
     color: #fff;
 }
 
@@ -4119,4 +4040,1338 @@ body.modal-open {
     font-weight: 700;
     color: #66207f;
     /* purple-ish highlight */
+}
+
+/* Enhanced Internal Page Backgrounds from Update */
+.sprints-page-wrapper {
+    background: linear-gradient(135deg, rgba(2, 10, 20, 0.85), rgba(10, 58, 122, 0.85), rgba(4, 18, 38, 0.85)) !important;
+    min-height: 100vh;
+}
+
+.sprints-page-wrapper .highlight {
+    color: #3B82F6 !important;
+}
+
+.sprints-page-wrapper .primary-btn {
+    background: linear-gradient(135deg, #3B82F6, #60A5FA) !important;
+}
+
+.sprints-page-wrapper .announcement-card,
+.sprints-page-wrapper .roadmaps-card,
+.sprints-page-wrapper .card {
+    background: var(--card-bg) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.sprints-page-wrapper .announcement-card:hover,
+.sprints-page-wrapper .roadmaps-card:hover,
+.sprints-page-wrapper .card:hover {
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.1) !important;
+}
+
+.announcements-page-wrapper .primary-btn,
+.announcements-page-wrapper .read-more {
+    background: linear-gradient(135deg, #FF7A18, #FFB347) !important;
+    border-color: #FF7A18 !important;
+    color: #E6EDF3 !important;
+}
+
+.announcements-page-wrapper .announcement-card {
+    background: var(--card-bg) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.announcements-page-wrapper .announcement-card:hover {
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Uniform Global Card UI based on user rule */
+.vision-card,
+.mission-card,
+.team-member,
+.roadmaps-card,
+.announcement-card,
+.winner-card,
+.card {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    transition: all 0.3s ease;
+}
+
+.vision-card:hover,
+.mission-card:hover,
+.team-member:hover,
+.roadmaps-card:hover,
+.announcement-card:hover,
+.winner-card:hover,
+.card:hover {
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.1) !important;
+    transform: translateY(-5px);
+}
+
+.register-page {
+    background: linear-gradient(135deg, #1A0410, #5F0A3A, #26061A) !important;
+    min-height: 100vh;
+}
+
+.announcements-page-wrapper {
+    background: linear-gradient(135deg, rgba(20, 10, 2, 0.85), rgba(122, 46, 5, 0.85), rgba(42, 18, 4, 0.85)) !important;
+    min-height: 100vh;
+}
+
+.announcements-page-wrapper .highlight {
+    color: #FF7A18 !important;
+}
+
+/* Global Typing Animation */
+.typing-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.typing-text {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: clamp(1.4rem, 4vw, 3rem) !important;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--light-text);
+    letter-spacing: 2px;
+    line-height: 1.1;
+
+    overflow: hidden;
+    white-space: nowrap;
+    /* no cursor */
+    margin: 0 auto;
+    animation:
+        typing 2.5s steps(40, end);
+}
+
+@keyframes typing {
+    from {
+        width: 0
+    }
+
+    to {
+        width: 100%
+    }
+}
+
+@keyframes blink-caret {
+
+    from,
+    to {
+        border-color: transparent
+    }
+
+    50% {
+        border-color: var(--light-text);
+    }
+}
+
+/* Home Page explicit typography resize */
+#home .typing-text {
+    font-size: clamp(2.5rem, 6vw, 4.5rem) !important;
+}
+
+/* Post-Typing Animation reveals */
+.delayed-reveal-1 {
+    opacity: 0;
+    animation: revealAfterType 0.8s ease-out 2.5s forwards;
+}
+
+.delayed-reveal-2 {
+    opacity: 0;
+    animation: revealAfterType 0.8s ease-out 2.7s forwards;
+}
+
+.delayed-reveal-3 {
+    opacity: 0;
+    animation: revealAfterType 0.8s ease-out 2.9s forwards;
+}
+
+@keyframes revealAfterType {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ===== Spline Hero Split Layout ===== */
+.hero-split-layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 40px;
+    padding-top: 50px;
+}
+
+.hero-content.left-align {
+    flex: 1.2;
+    text-align: left;
+    align-items: flex-start;
+}
+
+.hero-content.left-align .typing-container {
+    justify-content: flex-start;
+}
+
+.hero-spline-container {
+    flex: 1;
+    height: 550px;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spline-canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.spline-loader {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-text);
+    font-size: 1.2rem;
+    gap: 15px;
+}
+
+/* Spinner */
+.spinner {
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-left-color: var(--light-text);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 968px) {
+    .hero-split-layout {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding-top: 20px;
+    }
+
+    .hero-content.left-align {
+        align-items: center;
+        text-align: center;
+    }
+
+    .hero-content.left-align .typing-container {
+        justify-content: center;
+    }
+
+    .hero-spline-container {
+        width: 100%;
+        height: 400px;
+        margin-top: 30px;
+    }
+}
+
+/* Exact Left-Alignment Fixes for Split Layout */
+.hero-content.left-align .typing-text {
+    margin: 0 !important;
+}
+
+.hero-content.left-align .hero-buttons {
+    justify-content: flex-start !important;
+}
+
+@media (max-width: 968px) {
+    .hero-content.left-align .typing-text {
+        margin: 0 auto !important;
+    }
+
+    .hero-content.left-align .hero-buttons {
+        justify-content: center !important;
+    }
+}
+
+
+/* ===== Fix FontAwesome White-out Invisibility ===== */
+/* Restores glyph visibility against the newly assigned #ffffff solid card backgrounds */
+.mission-icon i,
+.vision-icon i,
+.team-icon i,
+.feature-icon i,
+.icon i {
+    color: var(--primary-color) !important;
+    text-shadow: none !important;
+}
+
+/* Ensure the wrapper icons remain properly centered if the Flex alignment broke */
+.mission-icon,
+.vision-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ===== Section-Specific Icon Colors ===== */
+/* Overriding the global Teal fallback with theme-appropriate vibrant hexes */
+.vision-icon i {
+    color: #e53e3e !important;
+    /* Vibrant Red */
+}
+
+.mission-icon i {
+    color: #d4af37 !important;
+    /* Gold */
+}
+
+.team-icon i,
+.team-member .icon i {
+    color: #00A8A8 !important;
+    /* Teal */
+}
+
+.feature-icon i,
+.about-icon i {
+    color: #9f7aea !important;
+    /* Purple/Indigo */
+}
+
+
+/* ===== MODERN VISION BANNER ===== */
+.vision-banner {
+    max-width: 1100px;
+    margin: 40px auto 60px;
+    padding: clamp(40px, 6vw, 60px) clamp(20px, 5vw, 40px);
+    position: relative;
+    border-radius: 20px;
+
+    /* Native Glassmorphism mapping */
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 15px 45px rgba(229, 62, 62, 0.15);
+    /* Sleek red glow to match maroon background */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.vision-banner:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 25px 55px rgba(229, 62, 62, 0.25);
+}
+
+.vision-banner h3 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #ffffff 40%, #ff8c8c 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 0;
+}
+
+
+/* ===== HOME PAGE WHITE TEXT OVERRIDES ===== */
+.hero p,
+.vision p,
+.mission p,
+.team p,
+.about p,
+.hero h1,
+.vision h1,
+.mission h1,
+.team h1,
+.about h1,
+.hero h2,
+.vision h2,
+.mission h2,
+.team h2,
+.about h2,
+.hero h3,
+.vision h3,
+.mission h3,
+.team h3,
+.about h3 {
+    color: #ffffff !important;
+}
+
+/* Ensure the typing text stays bold white since we overrode previous */
+.typing-text {
+    color: #ffffff !important;
+}
+
+/* ===== GLOBAL SECTION GRADIENT ANIMATIONS ===== */
+@keyframes smoothMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.hero,
+.vision,
+.mission,
+.team,
+.about {
+    background-size: 300% 300% !important;
+    animation: smoothMove 12s ease infinite !important;
+}
+
+/* ===== SECTION-SPECIFIC ICON SHADOWS ===== */
+
+/* Vision (Red) */
+.vision-icon {
+    box-shadow: 0 10px 25px rgba(229, 62, 62, 0.6) !important;
+}
+
+.vision-card:hover .vision-icon {
+    box-shadow: 0 15px 35px rgba(229, 62, 62, 0.6) !important;
+}
+
+/* Mission (Gold) */
+.mission-icon {
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.6) !important;
+}
+
+.mission-card:hover .mission-icon {
+    box-shadow: 0 15px 35px rgba(212, 175, 55, 0.6) !important;
+}
+
+/* Team (Teal) */
+.team-member .icon {
+    box-shadow: 0 10px 25px rgba(0, 168, 168, 0.6) !important;
+}
+
+.team-member:hover .icon {
+    box-shadow: 0 15px 35px rgba(0, 168, 168, 0.6) !important;
+}
+
+/* About/Features (Purple) */
+.feature-icon,
+.about-icon {
+    box-shadow: 0 10px 25px rgba(159, 122, 234, 0.6) !important;
+}
+
+.card:hover .feature-icon,
+.about-card:hover .about-icon {
+    box-shadow: 0 15px 35px rgba(159, 122, 234, 0.6) !important;
+}
+
+
+
+/* ===== TEAM GRID TO SINGLE-LINE CAROUSEL OVERRIDES ===== */
+.team-members-wrapper {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 20px !important;
+    padding-bottom: 25px !important;
+    /* Space for scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) rgba(255, 255, 255, 0.05);
+}
+
+/* Custom scrollbar matching neon design */
+.team-members-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.team-members-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.team-members-wrapper::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+/* Scale individual cards horizontally so they all sit pretty */
+.team-member {
+    flex: 0 0 auto !important;
+    width: 280px !important;
+    min-width: 280px !important;
+}
+
+/* Combine Name and Position on exactly the same line */
+.team-member .member-info {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: baseline !important;
+    justify-content: center !important;
+    gap: 8px !important;
+}
+
+.team-member .member-info h3 {
+    font-size: 1.1rem !important;
+    margin: 0 !important;
+}
+
+/* Scale down font position to fit comfortably next to name */
+.team-member .member-info .role {
+    font-size: 0.8rem !important;
+    margin: 0 !important;
+    opacity: 0.85 !important;
+}
+
+/* For extremely long titles that might break the line, shrink them dynamically */
+@media (max-width: 768px) {
+    .team-member {
+        width: 240px !important;
+        min-width: 240px !important;
+    }
+
+    .team-member .member-info {
+        flex-wrap: wrap !important;
+        /* Only fallback to wrap on extremely tiny mobile devices */
+    }
+}
+
+
+/* ===== WHAT WE DO - PROJECTS GRID REFORMAT ===== */
+/* Force 4 columns side-by-side */
+.winner-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 15px !important;
+}
+
+/* Shrink Project Card typography to securely fit a 4-column constraint */
+.winner-grid .project-card h3 {
+    font-size: 1.1rem !important;
+    line-height: 1.2 !important;
+}
+
+.winner-grid .project-card p {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+}
+
+.winner-grid .project-card .status {
+    font-size: 0.75rem !important;
+    padding: 3px 8px !important;
+}
+
+/* Re-stack cleanly on smaller viewports to prevent squishing */
+@media (max-width: 1024px) {
+    .winner-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .winner-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+
+/* ===== TEAM SECTION INLINE FORMATTING ===== */
+/* Force Name and Position structural tags to align horizontally on the same line */
+.member-info {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+}
+
+.member-info h3 {
+    margin-bottom: 0 !important;
+    font-size: 1.2rem !important;
+}
+
+.member-info .role {
+    margin: 0 !important;
+    font-size: 0.95rem !important;
+    color: var(--secondary-color) !important;
+    /* Keep the role visually distinct */
+}
+
+
+/* ===== WINNER PROJECTS CARD FOOTER INLINE ALIGNMENT ===== */
+/* Force the team name and status into a strict single-line flexbox */
+.winner-card .winner-footer {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    /* Prevent any wrapping */
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 5px !important;
+    width: 100% !important;
+    margin-top: auto;
+    /* Push to bottom if height varies */
+}
+
+/* Shrink the team name and allow it to gracefully truncate if it's too long */
+.winner-card .winner-footer .team-name {
+    font-size: 0.8rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    margin: 0 !important;
+    flex: 1;
+    /* Allow it to take up available space */
+    text-align: left;
+}
+
+/* Shrink the status block specifically and prevent it from word-wrapping or shrinking */
+.winner-card .winner-footer .winner-status {
+    font-size: 0.7rem !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+}
+
+/* Let the general Project grid expand a bit wider internally to give the cards more breathing room */
+.about {
+    padding-top: 150px !important;
+    padding-bottom: 100px !important;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+}
+
+.about-content {
+    max-width: 1350px !important;
+    margin: 0 auto;
+}
+
+
+/* Dynamic React Typing Cursor Animation */
+.blinking-cursor {
+    font-weight: 300;
+    color: #ffffff;
+    opacity: 1;
+    animation: blinkCursor 0.8s infinite;
+    display: inline-block;
+    vertical-align: text-bottom;
+}
+
+@keyframes blinkCursor {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+
+/* ===== FRESH ANNOUNCEMENTS PAGE OVERHAUL ===== */
+
+.announcements-page-wrapper {
+    /* Pure vibrant orange gradient */
+    background: linear-gradient(135deg, #140A02, #FF7A18, #A84408, #2A1204) !important;
+    min-height: 100vh;
+    padding-top: 120px;
+    /* Safely clear the global Navbar */
+    padding-bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    /* Apply existing global smoothMove background animation */
+    background-size: 300% 300% !important;
+    animation: smoothMove 12s ease infinite !important;
+}
+
+/* Force pure white contrast over the moving orange background */
+.announcements-page-wrapper h1,
+.announcements-page-wrapper h2,
+.announcements-page-wrapper h3,
+.announcements-page-wrapper p {
+    color: #ffffff !important;
+}
+
+/* Override the old orange highlight so it doesn't get lost in the orange background */
+.announcements-page-wrapper .highlight {
+    color: #ffffff !important;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    font-weight: 900;
+}
+
+.announcements-page-wrapper .page-header {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 50px;
+}
+
+.announcements-page-wrapper .underline {
+    background: #ffffff !important;
+    margin: 15px auto 25px auto;
+}
+
+/* Style the Empty State container into a premium Native Glass card */
+.announcements-page {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+    /* Mobile safety padding */
+}
+
+.announcements-page .announcements-container {
+    padding: 60px 40px;
+    background: rgba(255, 255, 255, 0.08);
+    /* Frosted Glass */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.announcements-page .announcements-container h3 {
+    font-size: clamp(1.8rem, 4vw, 2.5rem) !important;
+    font-weight: 800;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.announcements-page .announcements-container p {
+    font-size: clamp(1rem, 2vw, 1.2rem) !important;
+    opacity: 0.9;
+    margin: 0;
+}
+
+
+/* ===== SPRINTS / ROADMAPS ROYAL BLUE THEME REDESIGN ===== */
+
+/* 1 & 2. Pure Royal Blue Background, purging all green */
+.sprints-page-wrapper {
+    background: linear-gradient(135deg, #020A14, #0A3A7A, #041226) !important;
+    min-height: 100vh;
+    padding-bottom: 80px;
+    padding-top: 80px;
+    /* Navbar buffer */
+    position: relative;
+    z-index: 1;
+    /* Dominates global canvas styles */
+}
+
+/* 4. Text Styling */
+.sprints-page-wrapper h1,
+.sprints-page-wrapper h2,
+.sprints-page-wrapper h3 {
+    color: #E6EDF3 !important;
+    font-weight: 700 !important;
+}
+
+.sprints-page-wrapper .highlight {
+    color: #60A5FA !important;
+    text-shadow: none !important;
+    background: transparent !important;
+    /* wipe old gradient webkit rules */
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+}
+
+.sprints-page-wrapper p,
+.sprints-page-wrapper .timeline-duration,
+.sprints-page-wrapper .hero-content p {
+    color: #9CA3AF !important;
+}
+
+/* 5. Cards (Timeline Content blocks) */
+.sprints-page-wrapper .timeline-content {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    padding: 25px !important;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.sprints-page-wrapper .timeline-item:hover .timeline-content {
+    border-color: #3B82F6 !important;
+    transform: translateY(-3px) !important;
+    /* Soft enhanced shadow on hover mapping to blue */
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15) !important;
+}
+
+/* 3. Buttons (Resource Links) */
+.sprints-page-wrapper .resource-link {
+    background: linear-gradient(135deg, #3B82F6, #60A5FA) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.4) !important;
+    transition: all 0.3s ease !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    padding: 10px 20px !important;
+    /* Ensure it looks like a premium button */
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    text-decoration: none !important;
+}
+
+.sprints-page-wrapper .resource-link:hover {
+    background: linear-gradient(135deg, #60A5FA, #93C5FD) !important;
+    box-shadow: 0 0 15px rgba(96, 165, 250, 0.6) !important;
+    transform: translateY(-2px) !important;
+    color: #ffffff !important;
+}
+
+/* 6. Timeline Line & Nodes */
+.sprints-page-wrapper .roadmap-timeline::before {
+    background: #3B82F6 !important;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5) !important;
+    /* Soft glow along entire spine */
+}
+
+.sprints-page-wrapper .timeline-marker {
+    background: #020A14 !important;
+    /* Clean dark center matching gradient edge */
+    color: #E6EDF3 !important;
+    border: 3px solid #3B82F6 !important;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.6) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Flash nodes brilliantly on interaction */
+.sprints-page-wrapper .timeline-item:hover .timeline-marker {
+    background: #3B82F6 !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 15px rgba(96, 165, 250, 0.8) !important;
+}
+
+/* Strip global FontAwesome fallbacks explicitly, replacing all green/teal icons with correct blue mapping */
+.sprints-page-wrapper i {
+    color: #60A5FA !important;
+    text-shadow: none !important;
+}
+
+.sprints-page-wrapper .resource-link i {
+    color: #FFFFFF !important;
+    /* Force icons inside blue buttons specifically back to white */
+}
+
+/* Reset the underline global teal color explicitly for Roadmaps */
+.sprints-page-wrapper .underline {
+    background: #3B82F6 !important;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5) !important;
+}
+
+
+/* ===== ROADMAPS HERO GREEN PURGE & ROYAL BLUE OVERRIDE ===== */
+
+/* 1 & 2. Pure Royal Blue Background for Hero */
+.roadmaps-hero {
+    /* Background and z-index removed to let internal particles show over the wrapper background */
+    position: relative !important;
+    overflow: hidden !important;
+    /* Blend smoothly with the timeline layer via a soft translucent blue border */
+    border-bottom: 1px solid rgba(59, 130, 246, 0.1) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* 3 & 4. Purge the old green ::after orb and replace with royal blue blend */
+.roadmaps-hero::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(2, 10, 20, 0.6) !important;
+    /* Overlay darkening requirement */
+    z-index: 0 !important;
+    filter: none !important;
+    transform: none !important;
+}
+
+/* Apply the requested blue glowing orb explicitly removing the green */
+.roadmaps-hero::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 1000px !important;
+    height: 1000px !important;
+    /* Soft blue particle glow */
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 60%) !important;
+    z-index: 1 !important;
+    filter: blur(80px) !important;
+}
+
+/* 5. Heading styles */
+.roadmaps-hero .hero-content h1,
+.roadmaps-hero .hero-content h2,
+.roadmaps-hero .typing-text,
+.roadmaps-hero .hero-content {
+    color: #E6EDF3 !important;
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+/* Highlight word precisely */
+.roadmaps-hero .hero-content .highlight {
+    color: #60A5FA !important;
+    text-shadow: 0 0 15px rgba(96, 165, 250, 0.4) !important;
+    background: transparent !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+}
+
+/* 6. Subtext */
+.roadmaps-hero .hero-content p {
+    color: #9CA3AF !important;
+    position: relative !important;
+    z-index: 5 !important;
+}
+
+/* Defensive CSS: Destroy any rogue green shapes/particles manually injected here */
+.roadmaps-hero .shapes,
+.roadmaps-hero [class*="shape"],
+.roadmaps-hero [class*="orb"] {
+    display: none !important;
+    /* Safest to remove unpredictable artifacts entirely */
+}
+
+
+/* ===== SPRINTS PAGE ANIMATION ====== */
+.sprints-page-wrapper,
+.roadmaps-hero {
+    background-size: 300% 300% !important;
+    animation: smoothMove 12s ease infinite !important;
+}
+
+
+/* ===== REGISTER PAGE NAVBAR CLEARANCE FIX ===== */
+.register-page {
+    /* Create a buffer to prevent the header/typing text from sliding under the transparent fixed navbar */
+    padding-top: 170px !important;
+    padding-bottom: 60px !important;
+    /* Ensure breathing room at the bottom too */
+}
+
+
+/* ===== SPRINTS HERO TYPOGRAPHY INCREASE ===== */
+.roadmaps-hero .hero-content .typing-text {
+    font-size: clamp(3rem, 7vw, 5rem) !important;
+    line-height: 1.2 !important;
+}
+
+.roadmaps-hero .hero-content h2 {
+    font-size: clamp(1.8rem, 4vw, 2.5rem) !important;
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+}
+
+.roadmaps-hero .hero-content p {
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem) !important;
+    max-width: 900px !important;
+    margin: 0 auto !important;
+    line-height: 1.6 !important;
+}
+
+
+/* ===== SPRINTS HERO FULL-WIDTH BLEED EXPLICIT OVERRIDE ===== */
+.roadmaps-hero {
+    /* Break out of any parent max-width wrappers to achieve true infinite full-width */
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin-left: calc(50% - 50vw) !important;
+    margin-right: calc(50% - 50vw) !important;
+    border-radius: 0 !important;
+    /* Ensure edges match monitor perfectly */
+    border-left: none !important;
+    border-right: none !important;
+}
+
+/* Ensure parents don't clip the bleed bounds */
+.sprints-page-wrapper,
+main {
+    overflow-x: hidden !important;
+}
+
+
+
+/* ===== PURE ORANGE ANNOUNCEMENTS REMASTER ===== */
+
+.announcements-page-wrapper {
+    /* 1. Pure vibrant orange gradient */
+    background: linear-gradient(135deg, #140A02, #7A2E05, #2A1204) !important;
+    min-height: 100vh;
+    padding-top: 130px;
+    /* Navbar buffer */
+    padding-bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative !important;
+    z-index: 1;
+    /* Ensure it stays above global particle background */
+
+    /* Animation requirement */
+    background-size: 300% 300% !important;
+    animation: smoothMove 12s ease infinite !important;
+    overflow: hidden;
+}
+
+/* 3. Overlay & 4. Particles/Ambient Glow simulation */
+.announcements-page-wrapper::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(20, 10, 2, 0.6) !important;
+    z-index: -2 !important;
+    pointer-events: none;
+}
+
+.announcements-page-wrapper::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 1200px !important;
+    height: 1200px !important;
+    /* 4. Orange particle glow */
+    background: radial-gradient(circle, rgba(255, 122, 24, 0.25) 0%, transparent 60%) !important;
+    z-index: -1 !important;
+    filter: blur(80px) !important;
+    pointer-events: none;
+}
+
+/* 6 & 9. Text Styling - Primary */
+.announcements-page-wrapper h1,
+.announcements-page-wrapper h2,
+.announcements-page-wrapper h3,
+.announcements-page-wrapper .typing-text {
+    color: #E6EDF3 !important;
+    font-weight: 700 !important;
+}
+
+/* 9. Secondary Text */
+.announcements-page-wrapper p,
+.announcements-page-wrapper .announcements-container p {
+    color: #9CA3AF !important;
+}
+
+/* 7. Highlight / Accents */
+.announcements-page-wrapper .highlight {
+    color: #FF7A18 !important;
+    text-shadow: 0 0 10px rgba(255, 122, 24, 0.3) !important;
+    background: transparent !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+}
+
+.announcements-page-wrapper .underline {
+    background: #FF7A18 !important;
+    box-shadow: 0 0 8px rgba(255, 122, 24, 0.5) !important;
+    margin: 15px auto 25px auto;
+}
+
+/* 5. Center Box (Announcements Container) */
+.announcements-page {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 3;
+}
+
+.announcements-page .announcements-container {
+    padding: 60px 40px;
+    background: rgba(255, 255, 255, 0.05) !important;
+    /* 5. Background */
+    border: 1px solid rgba(255, 122, 24, 0.2) !important;
+    /* 5. Border */
+    box-shadow: 0 0 12px rgba(255, 122, 24, 0.15) !important;
+    /* 5. Glow */
+    border-radius: 20px;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* 8. Buttons (Prospective) */
+.announcements-page-wrapper .btn,
+.announcements-page-wrapper .read-more {
+    background: linear-gradient(135deg, #FF7A18, #FFB347) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 10px rgba(255, 122, 24, 0.4) !important;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.announcements-page-wrapper .btn:hover,
+.announcements-page-wrapper .read-more:hover {
+    background: #FFA94D !important;
+    /* 8. Hover */
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(255, 122, 24, 0.6) !important;
+    color: #ffffff !important;
+}
+
+/* Force icons to match orange theme and kill teal shadow/glow */
+.announcements-page-wrapper i {
+    color: #FF7A18 !important;
+    text-shadow: none !important;
+}
+
+.announcements-page-wrapper .read-more i,
+.announcements-page-wrapper .btn i {
+    color: #FFFFFF !important;
+    /* Icons inside buttons stay white */
+}
+
+/* Kill global green artifacts strictly */
+.announcements-page-wrapper [class*="shape"],
+.announcements-page-wrapper [class*="orb"] {
+    display: none !important;
+}
+
+
+/* Announcements Empty State Alignment */
+.announcements-page .empty-state {
+    text-align: center !important;
+    padding: 3rem !important;
+    width: 100% !important;
+}
+
+.announcements-page .empty-state h3 {
+    margin-bottom: 15px !important;
+}
+
+.announcements-page .empty-state p {
+    color: #9CA3AF !important;
+}
+
+/* ===== REGISTER PAGE PURE PINK REDESIGN ===== */
+
+/* 1 & 10. Pure Pink Animated Background */
+.register-page {
+    background: linear-gradient(135deg, #1A0010, #800040, #33001A) !important;
+    background-size: 300% 300% !important;
+    animation: smoothMove 12s ease infinite !important;
+    position: relative !important;
+    z-index: 2 !important;
+    overflow: hidden;
+}
+
+/* 3 & 4. Simulating overlay and pink ambient glow overriding the green/orange bleed */
+.register-page::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: rgba(26, 0, 16, 0.6) !important;
+    z-index: -2 !important;
+    pointer-events: none;
+}
+
+.register-page::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 1200px !important;
+    height: 1200px !important;
+    /* 4. Pink particle glow */
+    background: radial-gradient(circle, rgba(255, 20, 147, 0.25) 0%, transparent 60%) !important;
+    z-index: -1 !important;
+    filter: blur(80px) !important;
+    pointer-events: none;
+}
+
+/* 5. Center Cards (Content & Form wrapper bounds) */
+.register-page .register-content,
+.register-page .register-form {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 20, 147, 0.2) !important;
+    box-shadow: 0 0 12px rgba(255, 20, 147, 0.15) !important;
+    border-radius: 20px !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    position: relative;
+    z-index: 3;
+    padding: 30px !important;
+}
+
+/* Form Inputs matching the native pink theme mapping */
+.register-page input,
+.register-page select,
+.register-page textarea {
+    background: rgba(26, 0, 16, 0.5) !important;
+    border: 1px solid rgba(255, 20, 147, 0.3) !important;
+    color: #E6EDF3 !important;
+}
+
+.register-page input:focus,
+.register-page select:focus,
+.register-page textarea:focus {
+    border-color: #FF1493 !important;
+    box-shadow: 0 0 8px rgba(255, 20, 147, 0.3) !important;
+    outline: none !important;
+}
+
+/* Dropdown specific reset */
+.register-page select option {
+    background: #1A0010 !important;
+    color: #E6EDF3 !important;
+}
+
+/* 6 & 9. Headings and Text */
+.register-page h1,
+.register-page h2,
+.register-page h3,
+.register-page .typing-text {
+    color: #E6EDF3 !important;
+    font-weight: 700 !important;
+}
+
+.register-page p,
+.register-page li,
+.register-page label,
+.register-page .checkbox-group {
+    color: #9CA3AF !important;
+}
+
+/* 7. Highlight / Accents (Icons, Checklist) */
+.register-page i,
+.register-page .highlight {
+    color: #FF1493 !important;
+    text-shadow: 0 0 10px rgba(255, 20, 147, 0.3) !important;
+}
+
+/* Force icon mapping actively overriding global teal fallbacks */
+.register-page .benefits-list i {
+    color: #FF1493 !important;
+}
+
+/* 8. Buttons */
+.register-page .btn.primary-btn {
+    background: linear-gradient(135deg, #FF1493, #FF69B4) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 10px rgba(255, 20, 147, 0.4) !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+    font-weight: bold !important;
+}
+
+.register-page .btn.primary-btn:hover {
+    background: #FF69B4 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 0 15px rgba(255, 20, 147, 0.6) !important;
+}
+
+/* Particles Containment for Home Sections */
+.hero,
+.vision,
+.mission,
+.team,
+.about {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* Ensure content is above particles */
+.hero>*:not(.particles-container),
+.vision>*:not(.particles-container),
+.mission>*:not(.particles-container),
+.team>*:not(.particles-container),
+.about>*:not(.particles-container) {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* Particles Containment for Pages */
+.announcements-page-wrapper,
+.sprints-page-wrapper,
+.register-page {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* Ensure page content is above particles */
+.announcements-page-wrapper>*:not(.particles-container),
+.sprints-page-wrapper>*:not(.particles-container),
+/* Note: register-page is a section itself in its JSX, but the wrapper logic applies */
+.register-page>*:not(.particles-container) {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* Ensure Hero banner in Sprints also contains particles if needed, 
+   redundancy for full-width bleed if particles are added there too */
+.roadmaps-hero {
+    position: relative !important;
 }

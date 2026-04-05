@@ -38,7 +38,7 @@ export default function WinnerProjects() {
       ]
     },
     {
-      id: 1,
+      id: 3,
       title: "HABIT FLOW",
       teamName: "SOLAR WAVES",
       status: "FRONTEND Winner",
@@ -51,7 +51,7 @@ export default function WinnerProjects() {
       ]
     },
     {
-      id: 2,
+      id: 4,
       title: "INCOIS SAMACHAR",
       teamName: "THE_SHIP",
       status: "FRONTEND RunnerUp",

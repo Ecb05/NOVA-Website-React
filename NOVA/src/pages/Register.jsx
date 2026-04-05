@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ParticlesBackground from '../components/ParticlesBackground';
 
 
 const Register = () => {
@@ -83,42 +84,49 @@ const Register = () => {
 
   return (
     <section className="register-page">
-    
+      <ParticlesBackground
+        id="particles-register"
+        particleColors={['#FF1493', '#FF69B4', '#FFB6C1']}
+        lineColor="#FF1493"
+      />
+
 
       <div className="register-container">
         <div className="register-content" data-aos="fade-right">
-          <h3>Become a Member</h3>
+          <div className="typing-container">
+            <h1 className="typing-text">Become a Member</h1>
+          </div>
           <p>
-            Join our community of tech enthusiasts and get access to exclusive events, 
+            Join our community of tech enthusiasts and get access to exclusive events,
             workshops, and networking opportunities.
           </p>
 
           <div className="benefits-image">
-            <img 
-              src="https://img.freepik.com/free-vector/team-goals-concept-illustration_114360-5176.jpg" 
+            <img
+              src="https://img.freepik.com/free-vector/team-goals-concept-illustration_114360-5176.jpg"
               alt="NOVA Benefits"
             />
           </div>
 
           <ul className="benefits-list">
             <li>
-              <i className="fas fa-check-circle"></i> 
+              <i className="fas fa-check-circle"></i>
               Access to all NOVA events and workshops
             </li>
             <li>
-              <i className="fas fa-check-circle"></i> 
+              <i className="fas fa-check-circle"></i>
               Networking opportunities with industry professionals
             </li>
             <li>
-              <i className="fas fa-check-circle"></i> 
+              <i className="fas fa-check-circle"></i>
               Hands-on experience with cutting-edge technologies
             </li>
             <li>
-              <i className="fas fa-check-circle"></i> 
+              <i className="fas fa-check-circle"></i>
               Mentorship from senior members and alumni
             </li>
             <li>
-              <i className="fas fa-check-circle"></i> 
+              <i className="fas fa-check-circle"></i>
               Opportunity to work on real-world projects
             </li>
           </ul>
@@ -127,9 +135,9 @@ const Register = () => {
 
         <div className="register-form" data-aos="fade-left">
           <div className="form-header">
-            <img 
-              src="https://img.freepik.com/free-vector/sign-concept-illustration_114360-125.jpg" 
-              alt="Register" 
+            <img
+              src="https://img.freepik.com/free-vector/sign-concept-illustration_114360-125.jpg"
+              alt="Register"
               className="form-image"
             />
             <h3>Registration Form</h3>
@@ -180,7 +188,7 @@ const Register = () => {
                 value={formData.year}
                 onChange={handleInputChange}
                 required
-                
+
               >
                 <option value="">Select Year</option>
                 <option value="1">1st Year</option>
@@ -280,8 +288,8 @@ const Register = () => {
               </div>
             )}
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="btn primary-btn"
               disabled={isSubmitting}
             >

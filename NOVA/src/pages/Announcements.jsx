@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ParticlesBackground from '../components/ParticlesBackground';
 
 const AnnouncementsPage = () => {
   const [announcements, setAnnouncements] = useState([]);
@@ -10,24 +11,12 @@ const AnnouncementsPage = () => {
   }, []);
 
   // Function to load announcements from API
- const loadAnnouncements = async () => {
-  setLoading(true);
-  try {
-    const response = await fetch('/api/announcements');
-    if (!response.ok) {
-      throw new Error('Failed to fetch announcements');
-    }
-    const data = await response.json();
-    // Access the announcements array from the object
-    const announcementsArray = data.announcements || [];
-    setAnnouncements(announcementsArray.filter(item => item.isActive));
-  } catch (error) {
-    console.error('Error loading announcements:', error);
+  const loadAnnouncements = async () => {
+    setLoading(true);
+    // Hardcoded empty state as requested
     setAnnouncements([]);
-  } finally {
     setLoading(false);
-  }
-};
+  };
 
   if (loading) {
     return (
@@ -38,13 +27,18 @@ const AnnouncementsPage = () => {
   }
 
   return (
-    <>
+    <div className="announcements-page-wrapper">
+      <ParticlesBackground
+        id="particles-announcements"
+        particleColors={['#FF7A18', '#FFB347', '#FFD89B']}
+        lineColor="#FF7A18"
+      />
       {/* Page Header */}
       <section className="page-header">
         <div className="container">
-          <h1 data-aos="fade-up">
-            Latest <span className="highlight">Announcements</span>
-          </h1>
+          <div className="typing-container">
+            <h1 className="typing-text">Latest <span className="highlight">Announcements</span></h1>
+          </div>
           <div className="underline" data-aos="fade-up" data-aos-delay="100"></div>
           <p data-aos="fade-up" data-aos-delay="200">
             Stay updated with all the latest news, events, and opportunities from NOVA
@@ -57,10 +51,10 @@ const AnnouncementsPage = () => {
         <div className="announcements-container">
           {announcements.length > 0 ? (
             announcements.map((announcement, index) => (
-              <div 
+              <div
                 key={announcement.id}
-                className="announcement-card" 
-                data-aos="flip-left" 
+                className="announcement-card"
+                data-aos="flip-left"
                 data-aos-delay={(index + 1) * 100}
               >
                 <div className="announcement-icon">
@@ -80,11 +74,11 @@ const AnnouncementsPage = () => {
                     <i className="fas fa-clock"></i> {announcement.details.time}
                   </p>
                 </div>
-                
+
                 {announcement.registrationLink && (
-                  <a 
-                    href={announcement.registrationLink} 
-                    target="_blank" 
+                  <a
+                    href={announcement.registrationLink}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="read-more"
                   >
@@ -94,12 +88,7 @@ const AnnouncementsPage = () => {
               </div>
             ))
           ) : (
-            <div style={{ 
-              textAlign: 'center', 
-              padding: '3rem', 
-              gridColumn: '1 / -1',
-              color: 'var(--gray-text)'
-            }}>
+            <div className="empty-state">
               <h3>No announcements available</h3>
               <p>Check back later for updates!</p>
             </div>
@@ -114,7 +103,7 @@ const AnnouncementsPage = () => {
           <a href="#" className="next">Next <i className="fas fa-chevron-right"></i></a>
         </div> */}
       </section>
-    </>
+    </div>
   );
 };
 
