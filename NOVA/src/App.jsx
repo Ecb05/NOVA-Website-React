@@ -6,7 +6,6 @@ import ParticlesBackground from './components/ParticlesBackground';
 import Home from './pages/Home';
 import AdminPanel from './admin/AdminPanel';
 import Events from './pages/Events';
-import Novathon from './pages/Novathon';
 import Register from './pages/Register';
 import Sprints from './pages/Sprints';
 // Temporary placeholder components (you'll create these later)
@@ -32,7 +31,6 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/events" element={<Events />} />
             <Route path="/sprints" element={<Sprints />} />
-            <Route path="/novathon" element={<Novathon />} />
             <Route path="/rules" element={<Rules />} />
             <Route path="/register" element={<Register />} />
             <Route path="/admin" element={<AdminPanel />} />

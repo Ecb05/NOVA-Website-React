@@ -62,15 +62,6 @@ const Navbar = () => {
               Sprints
             </Link>
           </li>
-          <li>
-            <Link
-              to="/novathon"
-              className={isActiveLink('/novathon') ? 'active' : ''}
-              onClick={closeMenu}
-            >
-              Novathon
-            </Link>
-          </li>
 
           <li>
             <Link
