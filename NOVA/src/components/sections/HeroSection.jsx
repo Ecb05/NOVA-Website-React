@@ -42,13 +42,13 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Right Column Spline 3D Scene */}
+          {/* Right Column Spline 3D Scene 
           <div className="hero-spline-container" data-aos="fade-left" data-aos-duration="1200">
             <SplineScene
               scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
               className="spline-canvas"
             />
-          </div>
+          </div>*/}
 
         </div>
       </section>
