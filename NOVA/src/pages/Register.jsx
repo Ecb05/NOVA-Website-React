@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ParticlesBackground from '../components/ParticlesBackground';
-
-
+const API_URL = import.meta.env.VITE_API_URL
 const Register = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -15,10 +13,12 @@ const Register = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [responseMessage, setResponseMessage] = useState(''); // ✅ NEW: Store server message
+  const [fieldErrors, setFieldErrors] = useState({}); // ✅ NEW: Store field-specific errors
+
+  const MAX_MESSAGE_LENGTH = 1000;
 
   useEffect(() => {
-    // Initialize AOS if you're using it in your project
-    // Make sure to install: npm install aos
     if (window.AOS) {
       window.AOS.init({
         duration: 1000,
@@ -26,6 +26,9 @@ const Register = () => {
       });
     }
   }, []);
+   if (name === 'message' && value.length > MAX_MESSAGE_LENGTH) {
+      return; // Don't update if exceeds limit
+    }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,6 +36,15 @@ const Register = () => {
       ...prev,
       [name]: value
     }));
+    
+    // ✅ Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const handleCheckboxChange = (e) => {
@@ -49,9 +61,11 @@ const Register = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus(null);
+    setResponseMessage('');
+    setFieldErrors({});
 
     try {
-      const response = await fetch('/api/clubregister', {
+      const response = await fetch(`${API_URL}/api/clubregister`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,9 +73,13 @@ const Register = () => {
         body: JSON.stringify(formData)
       });
 
+      const data = await response.json(); // ✅ Always parse response
+
       if (response.ok) {
         setSubmitStatus('success');
-        // Reset form
+        setResponseMessage(data.message || 'Application submitted successfully!');
+        
+        // Reset form on success
         setFormData({
           name: '',
           rollno: '',
@@ -72,72 +90,71 @@ const Register = () => {
           message: ''
         });
       } else {
+        // ✅ Handle different error scenarios
         setSubmitStatus('error');
+        setResponseMessage(data.message || 'Something went wrong. Please try again.');
+        
+        // ✅ Handle field-specific errors (for duplicate checking)
+        if (data.field) {
+          setFieldErrors({ [data.field]: data.message });
+        }
       }
     } catch (error) {
       console.error('Error submitting form:', error);
       setSubmitStatus('error');
+      setResponseMessage('Network error. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
+  const remainingChars = MAX_MESSAGE_LENGTH - formData.message.length;
 
   return (
     <section className="register-page">
-      <ParticlesBackground
-        id="particles-register"
-        particleColors={['#FF1493', '#FF69B4', '#FFB6C1']}
-        lineColor="#FF1493"
-      />
-
-
       <div className="register-container">
         <div className="register-content" data-aos="fade-right">
-          <div className="typing-container">
-            <h1 className="typing-text">Become a Member</h1>
-          </div>
+          <h3>Become a Member</h3>
           <p>
-            Join our community of tech enthusiasts and get access to exclusive events,
+            Join our community of tech enthusiasts and get access to exclusive events, 
             workshops, and networking opportunities.
           </p>
 
           <div className="benefits-image">
-            <img
-              src="https://img.freepik.com/free-vector/team-goals-concept-illustration_114360-5176.jpg"
+            <img 
+              src="https://img.freepik.com/free-vector/team-goals-concept-illustration_114360-5176.jpg" 
               alt="NOVA Benefits"
             />
           </div>
 
           <ul className="benefits-list">
             <li>
-              <i className="fas fa-check-circle"></i>
+              <i className="fas fa-check-circle"></i> 
               Access to all NOVA events and workshops
             </li>
             <li>
-              <i className="fas fa-check-circle"></i>
+              <i className="fas fa-check-circle"></i> 
               Networking opportunities with industry professionals
             </li>
             <li>
-              <i className="fas fa-check-circle"></i>
+              <i className="fas fa-check-circle"></i> 
               Hands-on experience with cutting-edge technologies
             </li>
             <li>
-              <i className="fas fa-check-circle"></i>
+              <i className="fas fa-check-circle"></i> 
               Mentorship from senior members and alumni
             </li>
             <li>
-              <i className="fas fa-check-circle"></i>
+              <i className="fas fa-check-circle"></i> 
               Opportunity to work on real-world projects
             </li>
           </ul>
-
         </div>
 
         <div className="register-form" data-aos="fade-left">
           <div className="form-header">
-            <img
-              src="https://img.freepik.com/free-vector/sign-concept-illustration_114360-125.jpg"
-              alt="Register"
+            <img 
+              src="https://img.freepik.com/free-vector/sign-concept-illustration_114360-125.jpg" 
+              alt="Register" 
               className="form-image"
             />
             <h3>Registration Form</h3>
@@ -154,6 +171,27 @@ const Register = () => {
                 onChange={handleInputChange}
                 required
               />
+              {/* ✅ Show field-specific error */}
+              {fieldErrors.name && (
+                <span className="error-text">{fieldErrors.name}</span>
+              )}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="rollno">Roll Number</label>
+              <input
+                type="text"
+                id="rollno"
+                name="rollno"
+                value={formData.rollno}
+                onChange={handleInputChange}
+                placeholder="e.g., 2451-xx-xxx-xxx"
+                required
+              />
+              {/* ✅ Show field-specific error */}
+              {fieldErrors.rollno && (
+                <span className="error-text">{fieldErrors.rollno}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -164,8 +202,13 @@ const Register = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
+                placeholder=' eg., 2451xxxxxxxx@mvsrec.edu.in'
                 required
               />
+              {/* ✅ Show field-specific error */}
+              {fieldErrors.email && (
+                <span className="error-text">{fieldErrors.email}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -176,8 +219,13 @@ const Register = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
+                placeholder="+91XXXXXXXXXX"
                 required
               />
+              {/* ✅ Show field-specific error */}
+              {fieldErrors.phone && (
+                <span className="error-text">{fieldErrors.phone}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -188,7 +236,6 @@ const Register = () => {
                 value={formData.year}
                 onChange={handleInputChange}
                 required
-
               >
                 <option value="">Select Year</option>
                 <option value="1">1st Year</option>
@@ -264,32 +311,53 @@ const Register = () => {
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="message">Why do you want to join NOVA?</label>
+           <div className="form-group">
+              <label htmlFor="message">
+                Why do you want to join NOVA?
+                <span className="char-counter" style={{
+                  float: 'right',
+                  fontSize: '0.85rem',
+                  color: remainingChars < 100 ? '#ff6b6b' : 'var(--gray-text)'
+                }}>
+                  {remainingChars} characters remaining
+                </span>
+              </label>
               <textarea
                 id="message"
                 name="message"
                 rows="4"
                 value={formData.message}
                 onChange={handleInputChange}
+                maxLength={MAX_MESSAGE_LENGTH}
                 required
               />
+              {remainingChars < 100 && (
+                <span style={{ 
+                  fontSize: '0.8rem', 
+                  color: '#ff9800',
+                  display: 'block',
+                  marginTop: '0.3rem'
+                }}>
+                  {remainingChars === 0 ? 'Maximum character limit reached' : 'Approaching character limit'}
+                </span>
+              )}
             </div>
 
-            {submitStatus === 'success' && (
+            {/* ✅ Display server response message dynamically */}
+            {submitStatus === 'success' && responseMessage && (
               <div className="alert alert-success">
-                Application submitted successfully! We'll get back to you soon.
+                {responseMessage}
               </div>
             )}
 
-            {submitStatus === 'error' && (
+            {submitStatus === 'error' && responseMessage && (
               <div className="alert alert-error">
-                Something went wrong. Please try again later.
+                {responseMessage}
               </div>
             )}
 
-            <button
-              type="submit"
+            <button 
+              type="submit" 
               className="btn primary-btn"
               disabled={isSubmitting}
             >

@@ -83,7 +83,7 @@ const Navbar = () => {
 
 
 
-          <li>
+         {/**  <li>
             <Link
               to="/announcements"
               className={isActiveLink('/announcements') ? 'active' : ''}
@@ -91,7 +91,7 @@ const Navbar = () => {
             >
               Announcements
             </Link>
-          </li>
+          </li>**/}
           <li>
             <Link
               to="/sprints"
