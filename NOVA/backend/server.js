@@ -11,7 +11,7 @@ import bcrypt from 'bcrypt';
 
 import AnnouncementService from './AnnouncementService.js';
 
-// Load environment variables
+// Load environment variablesco
 dotenv.config();
 
 // Configure Cloudinary
@@ -88,7 +88,7 @@ async function getRegistrationDataSourceId() {
 
     notionCache.registrationDataSourceId = database.data_sources[0].id;
     console.log('[CACHE] Cached registration dataSourceId:', notionCache.registrationDataSourceId);
-    
+
     return notionCache.registrationDataSourceId;
   } catch (error) {
     console.error('[CACHE] Error fetching dataSourceId:', error);
@@ -109,7 +109,7 @@ async function getMembersDataSourceId() {
 
     notionCache.membersDataSourceId = database.data_sources[0].id;
     console.log('[CACHE] Cached registration dataSourceId:', notionCache.membersDataSourceId);
-    
+
     return notionCache.membersDataSourceId;
   } catch (error) {
     console.error('[CACHE] Error fetching dataSourceId:', error);
@@ -128,9 +128,9 @@ function clearNotionCache() {
 //validate email 
 function isValidMVSRECEmail(email) {
   if (!email || typeof email !== 'string') return false;
-  
+
   const MVSREC_EMAIL_REGEX = /^2451\d{2}\d{3}\d{3}@mvsrec\.edu\.in$/;
-  
+
   return MVSREC_EMAIL_REGEX.test(email.toLowerCase().trim());
 }
 
@@ -140,7 +140,7 @@ function isValidMVSRECEmail(email) {
 async function checkDuplicateRegistration(email, phone, transactionId) {
   try {
     const dataSourceId = await getRegistrationDataSourceId();
-    
+
     const response = await notion.request({
       path: `data_sources/${dataSourceId}/query`,
       method: 'POST',
@@ -158,7 +158,7 @@ async function checkDuplicateRegistration(email, phone, transactionId) {
     if (response.results.length > 0) {
       const duplicate = response.results[0];
       const properties = duplicate.properties;
-      
+
       // Identify which field is duplicate
       if (properties['Team Leader Email']?.email === email) {
         return { isDuplicate: true, field: 'email', message: 'This email is already registered' };
@@ -184,9 +184,9 @@ async function checkDuplicateRegistration(email, phone, transactionId) {
  */
 async function checkDuplicateClubMember(email, rollno, phone) {
   try {
-   
+
     const dataSourceId = await getMembersDataSourceId();
-    
+
     const response = await notion.request({
       path: `data_sources/${dataSourceId}/query`,
       method: 'POST',
@@ -204,7 +204,7 @@ async function checkDuplicateClubMember(email, rollno, phone) {
     if (response.results.length > 0) {
       const duplicate = response.results[0];
       const properties = duplicate.properties;
-      
+
       if (properties['Email']?.email === email) {
         return { isDuplicate: true, field: 'email', message: 'This email is already registered' };
       }
@@ -229,7 +229,7 @@ async function checkDuplicateClubMember(email, rollno, phone) {
 async function checkDuplicateTeamName(teamName) {
   try {
     const dataSourceId = await getRegistrationDataSourceId();
-    
+
     const response = await notion.request({
       path: `data_sources/${dataSourceId}/query`,
       method: 'POST',
@@ -242,9 +242,9 @@ async function checkDuplicateTeamName(teamName) {
     });
 
     if (response.results.length > 0) {
-      return { 
-        isDuplicate: true, 
-        message: 'This team name is already taken. Please choose another name.' 
+      return {
+        isDuplicate: true,
+        message: 'This team name is already taken. Please choose another name.'
       };
     }
 
@@ -266,44 +266,44 @@ const authenticateAdmin = (req, res, next) => {
   try {
     // Get token from Authorization header
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'No token provided. Please login again.' 
+      return res.status(401).json({
+        success: false,
+        error: 'No token provided. Please login again.'
       });
     }
 
     const token = authHeader.split(' ')[1];
-    
+
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
+
     // Attach user info to request
     req.admin = decoded;
     console.log('[AUTH] Admin authenticated:', decoded.username);
     next();
-    
+
   } catch (error) {
     console.error('[AUTH] Authentication error:', error.message);
-    
+
     if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Invalid token. Please login again.' 
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid token. Please login again.'
       });
     }
-    
+
     if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Token expired. Please login again.' 
+      return res.status(401).json({
+        success: false,
+        error: 'Token expired. Please login again.'
       });
     }
-    
-    return res.status(401).json({ 
-      success: false, 
-      error: 'Authentication failed. Please login again.' 
+
+    return res.status(401).json({
+      success: false,
+      error: 'Authentication failed. Please login again.'
     });
   }
 };
@@ -382,68 +382,68 @@ const loginLimiter = rateLimit({
 app.post('/api/admin/login', loginLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
-    
+
     // Validate input
     if (!username || !password) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Username and password are required' 
+      return res.status(400).json({
+        success: false,
+        error: 'Username and password are required'
       });
     }
 
     // Check if admin credentials are configured
     if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD_HASH) {
       console.error('[AUTH] Admin credentials not configured');
-      return res.status(500).json({ 
-        success: false, 
-        error: 'Server configuration error' 
+      return res.status(500).json({
+        success: false,
+        error: 'Server configuration error'
       });
     }
 
     // Verify username
     if (username !== process.env.ADMIN_USERNAME) {
       console.log('[AUTH] Invalid username attempt:', username);
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Invalid credentials' 
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid credentials'
       });
     }
 
     // Verify password with bcrypt
     const isValidPassword = await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH);
-    
+
     if (!isValidPassword) {
       console.log('[AUTH] Invalid password attempt for user:', username);
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Invalid credentials' 
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid credentials'
       });
     }
 
     // Generate JWT token
     const token = jwt.sign(
-      { 
+      {
         role: 'admin',
         username: username,
-        timestamp: Date.now() 
+        timestamp: Date.now()
       },
       process.env.JWT_SECRET,
       { expiresIn: '24h' } // Token expires in 24 hours
     );
-    
+
     console.log('[AUTH] Login successful for user:', username);
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       token: token,
       message: 'Login successful'
     });
-    
+
   } catch (error) {
     console.error('[AUTH] Login error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Authentication failed. Please try again.' 
+    res.status(500).json({
+      success: false,
+      error: 'Authentication failed. Please try again.'
     });
   }
 });
@@ -458,7 +458,7 @@ app.get('/api/announcements', async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error('[API] GET announcements error:', error);
-    
+
     // Return empty announcements on error to prevent frontend breaking
     res.status(200).json({ announcements: [] });
   }
@@ -468,24 +468,24 @@ app.get('/api/announcements', async (req, res) => {
 app.post('/api/announcements', authenticateAdmin, async (req, res) => {
   try {
     console.log('[API] Adding announcement by admin:', req.admin.username);
-    
+
     const newAnnouncement = await AnnouncementService.addAnnouncement(req.body);
-    
+
     // Return all announcements after adding
     const data = await AnnouncementService.getAnnouncements();
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       announcement: newAnnouncement,
-      announcements: data.announcements 
+      announcements: data.announcements
     });
-    
+
   } catch (error) {
     console.error('[API] POST announcement error:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
       error: 'Failed to add announcement',
-      message: error.message 
+      message: error.message
     });
   }
 });
@@ -494,31 +494,31 @@ app.post('/api/announcements', authenticateAdmin, async (req, res) => {
 app.delete('/api/announcements/:id', authenticateAdmin, async (req, res) => {
   try {
     console.log('[API] Deleting announcement by admin:', req.admin.username);
-    
+
     await AnnouncementService.deleteAnnouncement(req.params.id);
-    
+
     // Return updated list
     const data = await AnnouncementService.getAnnouncements();
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       message: 'Announcement deleted successfully',
-      announcements: data.announcements 
+      announcements: data.announcements
     });
-    
+
   } catch (error) {
     console.error('[API] DELETE announcement error:', error);
-    
+
     if (error.message.includes('not found')) {
-      res.status(404).json({ 
+      res.status(404).json({
         success: false,
-        error: 'Announcement not found' 
+        error: 'Announcement not found'
       });
     } else {
-      res.status(500).json({ 
+      res.status(500).json({
         success: false,
         error: 'Failed to delete announcement',
-        message: error.message 
+        message: error.message
       });
     }
   }
@@ -542,15 +542,15 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
   console.log('[REGISTER] Request received at:', new Date().toISOString());
   console.log('[REGISTER] Request body:', req.body);
   console.log('[REGISTER] File received:', req.file ? 'Yes' : 'No');
-  
-  const { 
-    teamName, 
-    teamLeaderEmail, 
+
+  const {
+    teamName,
+    teamLeaderEmail,
     teamLeaderPhone,
     members, // This will be a JSON string
-    transactionId 
+    transactionId
   } = req.body;
-  
+
   // Parse members JSON
   let parsedMembers;
   try {
@@ -562,7 +562,7 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
       message: 'Invalid members data format'
     });
   }
-  
+
   // Basic validation
   if (!teamName || !teamLeaderEmail || !teamLeaderPhone || !parsedMembers || parsedMembers.length === 0) {
     console.log('[REGISTER] Validation failed - missing required fields');
@@ -572,7 +572,7 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
     });
   }
 
-   if (!isValidMVSRECEmail(teamLeaderEmail)) {
+  if (!isValidMVSRECEmail(teamLeaderEmail)) {
     return res.status(400).json({
       success: false,
       message: 'Please use your official MVSREC college email!'
@@ -609,8 +609,8 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
 
   // ✅ NEW: Check for duplicate registration
   const duplicateCheck = await checkDuplicateRegistration(
-    teamLeaderEmail, 
-    teamLeaderPhone, 
+    teamLeaderEmail,
+    teamLeaderPhone,
     transactionId
   );
 
@@ -621,7 +621,7 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
       message: duplicateCheck.message
     });
   }
-  
+
   // Check if Notion is configured
   if (!process.env.NOTION_API_KEY) {
     console.error('[REGISTER] NOTION_API_KEY missing');
@@ -630,7 +630,7 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
       message: 'Server configuration error: Notion API key missing'
     });
   }
-  
+
   if (!process.env.NOTION_DATABASE_ID) {
     console.error('[REGISTER] NOTION_DATABASE_ID missing');
     return res.status(500).json({
@@ -642,30 +642,30 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
   // Generate team ID
   const teamId = generateTeamId();
   console.log('[REGISTER] Generated team ID:', teamId, '- Time elapsed:', Date.now() - startTime, 'ms');
-  
+
   // IMMEDIATELY send response to frontend
   console.log('[REGISTER] Sending response NOW - Time elapsed:', Date.now() - startTime, 'ms');
-  
+
   const responseData = {
     success: true,
-    message:  'Registration successful! Save your Team ID somewhere safe!',
+    message: 'Registration successful! Save your Team ID somewhere safe!',
     teamId: teamId
   };
-  
+
   res.writeHead(200, {
     'Content-Type': 'application/json',
     'Content-Length': Buffer.byteLength(JSON.stringify(responseData))
   });
   res.write(JSON.stringify(responseData));
   res.end();
-  
+
   console.log('[REGISTER] Response sent! Now processing in background...');
-  
+
   // Process registration in background (upload image + Notion + email)
   (async () => {
     try {
       console.log('[REGISTER-BG] Starting background processing for team:', teamId);
-      
+
       // Upload payment proof to Cloudinary
       let paymentProofUrl = '';
       try {
@@ -679,7 +679,7 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
       }
 
       // Create members array for Notion (with phone numbers)
-      const memberDetails = parsedMembers.map(member => 
+      const memberDetails = parsedMembers.map(member =>
         `${member.name} (${member.phone})`
       ).join(', ');
 
@@ -752,12 +752,12 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
       });
 
       const notionResponse = await Promise.race([createNotionPage, timeoutPromise]);
-      console.log('[REGISTER-BG] Notion record created:', notionResponse.id); 
+      console.log('[REGISTER-BG] Notion record created:', notionResponse.id);
       console.log('[REGISTER-BG] Background processing completed for team:', teamId);
-      
+
     } catch (error) {
       console.error('[REGISTER-BG] Error in background processing:', error);
-      
+
       if (error.code === 'validation_error') {
         console.error('[REGISTER-BG] Notion validation error for team:', teamId, error.message);
       } else if (error.status === 404) {
@@ -777,7 +777,7 @@ app.post('/api/register', upload.single('paymentProof'), async (req, res) => {
 app.post('/api/submit', async (req, res) => {
   const startTime = Date.now();
   console.log('[SUBMIT] Request received at:', new Date().toISOString());
-  
+
   try {
     const { submissionTeamId, projectUrl, videoPresentationUrl } = req.body;
 
@@ -809,7 +809,7 @@ app.post('/api/submit', async (req, res) => {
     const dataSourceId = await getRegistrationDataSourceId();
 
     // Create a timeout promise (25 seconds)
-    const timeoutPromise = new Promise((_, reject) => 
+    const timeoutPromise = new Promise((_, reject) =>
       setTimeout(() => reject(new Error('REQUEST_TIMEOUT')), 25000)
     );
 
@@ -823,10 +823,12 @@ app.post('/api/submit', async (req, res) => {
           filter: {
             and: [
               { property: 'Team ID', rich_text: { equals: submissionTeamId } },
-              { or: [
-                { property: 'Status', select: { equals: 'Active' } },
-                { property: 'Status', select: { equals: 'Pending Verification' } }
-              ]}
+              {
+                or: [
+                  { property: 'Status', select: { equals: 'Active' } },
+                  { property: 'Status', select: { equals: 'Pending Verification' } }
+                ]
+              }
             ]
           }
         }
@@ -856,8 +858,8 @@ app.post('/api/submit', async (req, res) => {
     const elapsed = Date.now() - startTime;
     console.log(`[SUBMIT] ✅ Success for team ${submissionTeamId} in ${elapsed}ms`);
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: 'Project submitted successfully!',
       teamId: submissionTeamId
     });
@@ -942,7 +944,7 @@ app.post('/api/clubregister', async (req, res) => {
   }
 
   // Email validation
-   if (!isValidMVSRECEmail(email)) {
+  if (!isValidMVSRECEmail(email)) {
     return res.status(400).json({
       success: false,
       message: 'Please use your official MVSREC college email!'
@@ -962,7 +964,7 @@ app.post('/api/clubregister', async (req, res) => {
 
   // ✅ NEW: Check for duplicate member
   const duplicateCheck = await checkDuplicateClubMember(email, rollno, cleanPhone);
-  
+
   if (duplicateCheck.isDuplicate) {
     return res.status(409).json({
       success: false,
@@ -1070,11 +1072,11 @@ app.post('/api/clubregister', async (req, res) => {
       message: 'Registration successful! We will contact you soon.',
     });
 
-    
+
 
   } catch (error) {
     console.error('[CLUB REGISTER] Error:', error);
-    
+
     // Handle specific Notion errors
     if (error.code === 'validation_error') {
       console.error('[CLUB REGISTER] Notion validation error:', error.message);
@@ -1083,7 +1085,7 @@ app.post('/api/clubregister', async (req, res) => {
         message: 'Database validation error. Please contact support.',
       });
     }
-    
+
     if (error.status === 404) {
       console.error('[CLUB REGISTER] Database not found');
       return res.status(500).json({
@@ -1136,9 +1138,9 @@ app.get('/api/test', (req, res) => {
 
 // Legacy health check (keeping for compatibility)
 app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    environment: process.env.NODE_ENV || 'development' 
+  res.json({
+    status: 'ok',
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 

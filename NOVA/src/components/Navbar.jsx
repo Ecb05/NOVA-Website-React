@@ -83,7 +83,7 @@ const Navbar = () => {
 
 
 
-          <li>
+          {/*<li>
             <Link
               to="/events"
               className={isActiveLink('/events') ? 'active' : ''}
@@ -91,7 +91,7 @@ const Navbar = () => {
             >
               Events
             </Link>
-          </li>
+          </li>*/}
           <li>
             <Link
               to="/sprints"

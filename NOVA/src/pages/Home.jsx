@@ -8,17 +8,17 @@ import AboutSection from '../components/sections/AboutSection';
 
 const Home = () => {
   return (
-   
+
     <>
-      
+
       <HeroSection />
       <VisionSection />
       <MissionSection />
-      <TeamSection />
+      {/*<TeamSection />*/}
       <AboutSection />
 
     </>
-    
+
   );
 };
 

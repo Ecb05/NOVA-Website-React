@@ -1,4 +1,4 @@
-/*import React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
@@ -19,16 +19,16 @@ const Footer = () => {
             <p>Network of Visionary Aspirants</p>
           </div>
         </div>
-        
-       
-        
+
+
+
         <div className="footer-contact">
           <h3>Contact Us</h3>
           <p><i className="fas fa-envelope"></i> novamvsr@gmail.com</p>
           <p><i className="fas fa-phone"></i> +91 9642200046</p>
           <p><i className="fas fa-map-marker-alt"></i> CSE Department, MVSR Engineering College</p>
         </div>
-        
+
         <div className="footer-social">
           <h3>Follow Us</h3>
           <div className="social-icons">
@@ -44,7 +44,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="footer-bottom">
         <p>&copy; 2025 NOVA - Network of Visionary Aspirants. All rights reserved.</p>
       </div>
@@ -52,16 +52,16 @@ const Footer = () => {
   );
 };
 
-export default Footer;*/
+export default Footer;
 
-
+{/*
 import React from 'react';
 import { FaEnvelope, FaPhone, FaInstagram, FaLinkedin, FaGithub } from 'react-icons/fa';
 
 const Footer = () => {
   return (
     <footer className="footer">
-      {/* Call to Action Section */}
+      {/* Call to Action Section 
       <div className="footer-cta-section">
         <div className="footer-cta-content">
           <p className="handwritten-message">
@@ -116,4 +116,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default Footer;*/}
