@@ -11,7 +11,7 @@ const Navbar = () => {
       // Ensure static background colors are applied on internal pages immediately
       if (location.pathname === '/sprints') setNavBackground('linear-gradient(135deg, rgba(2, 10, 20, 0.85), rgba(10, 58, 122, 0.85), rgba(4, 18, 38, 0.85))');
       else if (location.pathname === '/register') setNavBackground('linear-gradient(135deg, rgba(26, 4, 16, 0.85), rgba(95, 10, 58, 0.85), rgba(38, 6, 26, 0.85))');
-      else if (location.pathname === '/announcements') setNavBackground('linear-gradient(135deg, rgba(20, 10, 2, 0.85), rgba(122, 46, 5, 0.85), rgba(42, 18, 4, 0.85))');
+      else if (location.pathname === '/events') setNavBackground('linear-gradient(135deg, rgba(20, 10, 2, 0.85), rgba(122, 46, 5, 0.85), rgba(42, 18, 4, 0.85))');
       else setNavBackground('rgba(10, 10, 10, 0.6)');
       return;
     }
@@ -83,15 +83,15 @@ const Navbar = () => {
 
 
 
-         {/**  <li>
+          <li>
             <Link
-              to="/announcements"
-              className={isActiveLink('/announcements') ? 'active' : ''}
+              to="/events"
+              className={isActiveLink('/events') ? 'active' : ''}
               onClick={closeMenu}
             >
-              Announcements
+              Events
             </Link>
-          </li>**/}
+          </li>
           <li>
             <Link
               to="/sprints"
