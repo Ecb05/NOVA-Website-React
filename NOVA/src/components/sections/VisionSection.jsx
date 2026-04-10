@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ParticlesBackground from '../ParticlesBackground';
+
 
 const VisionSection = () => {
   const [displayText, setDisplayText] = useState('');
@@ -21,11 +21,11 @@ const VisionSection = () => {
 
   return (
     <section id="vision" className="vision">
-      <ParticlesBackground
+      {/*<ParticlesBackground
         id="particles-vision"
         particleColors={['#E53E3E', '#822727', '#C53030']}
         lineColor="#E53E3E"
-      />
+      />*/}
       <div className="section-header" data-aos="fade-up">
         <h2>Our <span className="highlight">Vision</span></h2>
         <div className="underline"></div>

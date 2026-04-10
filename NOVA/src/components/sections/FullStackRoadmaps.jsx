@@ -1,14 +1,14 @@
 import React from 'react';
-import ParticlesBackground from '../ParticlesBackground';
+
 
 const FullStackRoadmap = () => {
   return (
     <section className="detailed-roadmap mern-roadmap" id="mern-roadmap">
-      <ParticlesBackground
+     {/**  <ParticlesBackground
         id="particles-detailed-roadmap"
         particleColors={['#3B82F6', '#60A5FA', '#93C5FD']}
         lineColor="#3B82F6"
-      />
+      />**/}
       <div className="section-header" data-aos="fade-up">
         <h2><i className="fab fa-js-square"></i> <span className="highlight">FullStack</span> Web Development Roadmap</h2>
         <p>GitHub • React • Flask & Fast API • DataBase • Deployment</p>

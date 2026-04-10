@@ -1,11 +1,12 @@
 import React from 'react';
 import EventBook from '../EventBook/EventBook';
-import ParticlesBackground from '../ParticlesBackground';
+
 
 const AboutSection = () => {
   return (
     <section id="about" className="about section">
-      <ParticlesBackground id="particles-about" />
+      {/**<ParticlesBackground id="particles-about" />**/}
+
       <div className="section-header" data-aos="fade-up">
         <h2>What We <span className="highlight">Do</span></h2>
         <div className="underline"></div>

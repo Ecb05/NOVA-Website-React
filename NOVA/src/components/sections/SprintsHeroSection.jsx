@@ -1,14 +1,14 @@
 import React from 'react';
-import ParticlesBackground from '../ParticlesBackground';
+
 
 const SprintsHeroSection = () => {
   return (
     <section className="roadmaps-hero">
-      <ParticlesBackground
+      {/*<ParticlesBackground
         id="particles-roadmaps-hero"
         particleColors={['#3B82F6', '#60A5FA', '#93C5FD']}
         lineColor="#3B82F6"
-      />
+      />*/}
       <div className="hero-content centered" data-aos="fade-up" data-aos-duration="1000">
         <div className="typing-container">
           <h1 className="typing-text">Learning <span className="highlight">Roadmaps</span></h1>

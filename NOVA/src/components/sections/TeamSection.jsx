@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ParticlesBackground from '../ParticlesBackground';
+
 
 const TeamSection = () => {
     const [activeFilter, setActiveFilter] = useState('all');
@@ -382,7 +382,7 @@ const TeamSection = () => {
 
     return (
         <section id="team" className="team">
-            <ParticlesBackground id="particles-team" />
+            {/*<ParticlesBackground id="particles-team" />*/}
             <div className="section-header" data-aos="fade-up">
                 <h2>Meet Our <span className="highlight">Team</span></h2>
                 <div className="underline"></div>

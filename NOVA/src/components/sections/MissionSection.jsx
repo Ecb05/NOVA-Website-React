@@ -1,14 +1,14 @@
 import React from 'react';
-import ParticlesBackground from '../ParticlesBackground';
+
 
 const MissionSection = () => {
   return (
     <section id="mission" className="mission">
-      <ParticlesBackground
+     {/** } <ParticlesBackground
         id="particles-mission"
         particleColors={['#D69E2E', '#744210', '#B7791F']}
         lineColor="#D69E2E"
-      />
+      />*/}
       <div className="section-header" data-aos="fade-up">
         <h2>Our <span className="highlight">Mission</span></h2>
         <div className="underline"></div>
