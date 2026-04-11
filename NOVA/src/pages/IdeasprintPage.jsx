@@ -40,7 +40,7 @@ const IdeasprintPage = () => {
     {
       icon: '🧑‍🏫',
       title: 'Expert Mentorship',
-      desc: 'Get real-time guidance from faculty and industry mentors to shape and sharpen your ideas.',
+      desc: 'Get real-time guidance from CXOs and industry mentors to shape and sharpen your ideas.',
     },
     {
       icon: '🎤',
