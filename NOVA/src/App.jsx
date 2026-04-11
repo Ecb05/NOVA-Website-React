@@ -8,6 +8,7 @@ import AdminPanel from './admin/AdminPanel';
 import Events from './pages/Events';
 import Register from './pages/Register';
 import Sprints from './pages/Sprints';
+import IdeasprintPage from './pages/IdeasprintPage';
 // Temporary placeholder components (you'll create these later)
 
 
@@ -31,6 +32,7 @@ function App() {
             <Route path="/" element={<Home />} />
             {/*} <Route path="/events" element={<Events />} />*/}
             <Route path="/sprints" element={<Sprints />} />
+            <Route path="/ideasprint" element={<IdeasprintPage />} />
             <Route path="/rules" element={<Rules />} />
             <Route path="/register" element={<Register />} />
             <Route path="/admin" element={<AdminPanel />} />

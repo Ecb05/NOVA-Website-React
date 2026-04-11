@@ -21,6 +21,7 @@ const Navbar = () => {
         { id: 'home', color: 'linear-gradient(135deg, rgba(5, 7, 10, 0.85), rgba(11, 47, 42, 0.85), rgba(26, 27, 58, 0.85))' }, // Dark Gradient Theme
         { id: 'vision', color: 'rgba(50, 15, 15, 0.85)' }, // Red
         { id: 'mission', color: 'rgba(60, 45, 15, 0.85)' }, // Gold/Brown
+        { id: 'ideasprint', color: 'rgba(20, 15, 60, 0.85)' }, // Deep Indigo for Ideasprint
         { id: 'team', color: 'rgba(5, 50, 60, 0.85)' }, // Cyan
         { id: 'about', color: 'rgba(50, 5, 60, 0.85)' } // Indigo
       ];
@@ -92,6 +93,15 @@ const Navbar = () => {
               Events
             </Link>
           </li>*/}
+          <li>
+            <Link
+              to="/ideasprint"
+              className={isActiveLink('/ideasprint') ? 'active' : ''}
+              onClick={closeMenu}
+            >
+              Ideasprint
+            </Link>
+          </li>
           <li>
             <Link
               to="/sprints"
