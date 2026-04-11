@@ -22,7 +22,7 @@ const IdeasprintPage = () => {
   const highlights = [
     { icon: '🏆', label: 'Prize Pool', value: '₹20,000' },
     { icon: '🎫', label: 'Entry Fee', value: '₹100 / head' },
-    { icon: '📅', label: 'Duration', value: '2 Days' },
+    { icon: '📅', label: 'Duration', value: '1 Day' },
     { icon: '🎯', label: 'Slots', value: 'Limited' },
   ];
 
