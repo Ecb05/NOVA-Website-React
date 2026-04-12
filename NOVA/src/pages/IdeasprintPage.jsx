@@ -262,6 +262,9 @@ const IdeasprintPage = () => {
               <div className="is-coord-card">
                 <span className="is-coord-name">Dr. Sirisha Daggubati</span>
               </div>
+              <div className="is-coord-card">
+                <span className="is-coord-name">Dr. Namita Parati</span>
+              </div>
             </div>
           </div>
         </div>
@@ -275,7 +278,7 @@ const IdeasprintPage = () => {
           <p className="is-final-sub">Limited Slots Available</p>
           <h2 className="is-final-title">Ready to Sprint?</h2>
           <p className="is-final-desc">
-            Secure your spot today. Join the brightest minds at MVSREC for 48 hours of ideas,
+            Secure your spot today. Join the brightest minds at MVSREC for hours of ideas,
             mentorship, and glory.
           </p>
           <a

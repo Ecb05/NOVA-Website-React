@@ -25,6 +25,11 @@ const TeamSection = () => {
             image: '/images/hero/archita.jpeg',
         },
         {
+            name: 'Varshitha',
+            role: 'Social Media Management Lead',
+            image: '/images/hero/varshitha.jpeg',
+        },
+        {
             name: 'Hetal',
             role: 'Marketing Lead',
             image: '/images/hero/hetal.jpeg',
