@@ -34,6 +34,13 @@ const PANELISTS = [
     role: 'Director at Bharat Charge',
     linkedin: "https://www.linkedin.com/in/pradhyumnaenugula?utm_source=share_via&utm_content=profile&utm_medium=member_android"
   },
+  {
+    id: 5,
+    image: "/images/hero/eshwar.png",
+    name: 'E SAI ESHWAR',
+    role: 'Founder of Nirvaha Wellness',
+    linkedin: "https://www.linkedin.com/in/esaieshwar/",
+  },
 ];
 
 const Panelists = () => {
