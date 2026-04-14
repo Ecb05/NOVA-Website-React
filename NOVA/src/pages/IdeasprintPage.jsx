@@ -55,12 +55,7 @@ const IdeasprintPage = () => {
 
       {/* ─── HERO ─── */}
       <section className="is-hero">
-        {/* Geometric decorations */}
-        <span className="is-geo is-geo-tl" aria-hidden="true" />
-        <span className="is-geo is-geo-tr" aria-hidden="true" />
-        <span className="is-geo is-geo-bl" aria-hidden="true" />
-        <span className="is-geo is-geo-br" aria-hidden="true" />
-        <span className="is-dot-grid" aria-hidden="true" />
+        {/* Geometric decorations removed */}
 
         <div className="is-hero-inner">
           {/* Sub-brand */}
@@ -276,8 +271,7 @@ const IdeasprintPage = () => {
 
       {/* ─── FINAL CTA ─── */}
       <section className="is-final-cta">
-        <span className="is-geo is-geo-cta-l" aria-hidden="true" />
-        <span className="is-geo is-geo-cta-r" aria-hidden="true" />
+        {/* Geometric decorations removed */}
         <div className="is-final-cta-inner">
           <p className="is-final-sub">Limited Slots Available</p>
           <h2 className="is-final-title">Ready to Sprint?</h2>
