@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Panelists from '../components/sections/Panelists';
 
 const IdeasprintPage = () => {
   const [countdown, setCountdown] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -121,6 +122,9 @@ const IdeasprintPage = () => {
           </div>
         </div>
       </section>
+
+      {/* ─── PANELISTS ─── */}
+      <Panelists />
 
       {/* ─── COUNTDOWN ─── */}
       <section className="is-countdown-bar">
