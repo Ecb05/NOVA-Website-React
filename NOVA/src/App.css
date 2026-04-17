@@ -1270,9 +1270,9 @@ button,
 /* ── Grid ── */
 .is-panelists-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-    max-width: 1400px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    max-width: 950px;
     margin: 0 auto;
     justify-content: center;
 }
@@ -1448,7 +1448,7 @@ button,
 
 /* Role */
 .is-pcard-role {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 700;
     color: #00C853;
     margin: 4px 0 0;

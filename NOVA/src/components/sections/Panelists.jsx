@@ -41,6 +41,13 @@ const PANELISTS = [
     role: 'Founder of Nirvaha Wellness',
     linkedin: "https://www.linkedin.com/in/esaieshwar/",
   },
+  {
+    id: 6,
+    image: "/images/hero/deepika.png",
+    name: 'Deepika Palreddy',
+    role: 'Co-Founder at DraperU India',
+    linkedin: "https://www.linkedin.com/in/deepika-palreddy?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+  },
 ];
 
 const Panelists = () => {
