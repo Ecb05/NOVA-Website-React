@@ -45,6 +45,8 @@ interface DashboardSidebarProps {
   userRole?: string
   isDark?: boolean
   onThemeToggle?: () => void
+  isCollapsed?: boolean
+  onToggleCollapse?: () => void
 }
 
 const navItems: NavItem[] = [
@@ -290,8 +292,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   userRole = 'student',
   isDark = false,
   onThemeToggle,
+  isCollapsed = false,
+  onToggleCollapse,
 }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const location = useLocation()
 
@@ -321,7 +324,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
 
       {/* Collapse toggle */}
       <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
+        onClick={() => onToggleCollapse?.()}
         className="absolute -right-3 top-8 size-6 rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 flex items-center justify-center text-zinc-400 dark:text-zinc-500 hover:text-zinc-600 dark:hover:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-600 transition-all z-50 cursor-pointer shadow-sm dark:shadow-black/20"
         aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >

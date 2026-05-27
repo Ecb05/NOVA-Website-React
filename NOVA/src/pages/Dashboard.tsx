@@ -27,6 +27,7 @@ const Dashboard: React.FC = () => {
   const [activeSection, setActiveSection] = useState('overview')
   const [userPoints, setUserPoints] = useState<number>(0)
   const [userRole, setUserRole] = useState<string>('student')
+  const [isCollapsed, setIsCollapsed] = useState(false)
   const [isDark, setIsDark] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('nova-dashboard-theme')
@@ -48,6 +49,16 @@ const Dashboard: React.FC = () => {
   }, [isDark])
 
   const toggleTheme = () => setIsDark((prev) => !prev)
+  const toggleCollapse = () => setIsCollapsed((prev) => !prev)
+  const sidebarWidth = isCollapsed ? '68px' : '260px'
+
+  // Sync sidebar width with footer on the document element
+  useEffect(() => {
+    document.documentElement.style.setProperty('--sidebar-width', sidebarWidth)
+    return () => {
+      document.documentElement.style.removeProperty('--sidebar-width')
+    }
+  }, [sidebarWidth])
 
   // Sync with system preference changes
   useEffect(() => {
@@ -515,8 +526,13 @@ const Dashboard: React.FC = () => {
         userRole={userRole}
         isDark={isDark}
         onThemeToggle={toggleTheme}
+        isCollapsed={isCollapsed}
+        onToggleCollapse={toggleCollapse}
       />
-      <main className="flex-1 md:ml-[260px] min-h-screen transition-all duration-300 pt-20 md:pt-24">
+      <main className={cn(
+        'flex-1 min-h-screen transition-all duration-300 pt-20 md:pt-24',
+        isCollapsed ? 'md:ml-[68px]' : 'md:ml-[260px]'
+      )}>
         <div className="max-w-6xl px-5 py-8 md:px-8 md:py-10 mx-auto">
           {renderSection()}
         </div>

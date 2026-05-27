@@ -62,8 +62,11 @@ const AppContent: React.FC = (): React.JSX.Element => {
         </Routes>
       </main>
 
-      {/* Offset footer on dashboard so it clears the fixed sidebar */}
-      <div className={isDashboard ? 'md:ml-[260px] transition-all duration-300' : ''}>
+      {/* Offset footer on dashboard so it clears the fixed sidebar — reacts to collapse state via CSS variable */}
+      <div
+        className={isDashboard ? 'transition-all duration-300' : ''}
+        style={isDashboard ? { marginLeft: 'var(--sidebar-width, 260px)' } : undefined}
+      >
         <Footer />
       </div>
     </div>
