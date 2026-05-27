@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import multer from 'multer';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 import { v2 as cloudinary } from 'cloudinary';
 import { Client } from '@notionhq/client';
 import rateLimit from 'express-rate-limit';
@@ -10,9 +12,13 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 import AnnouncementService from './AnnouncementService.js';
+import authRoutes from './src/routes/auth.js';
 
-// Load environment variablesco
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load environment variables
+dotenv.config({ path: resolve(__dirname, '.env') });
 
 // Configure Cloudinary
 cloudinary.config({
@@ -1108,6 +1114,11 @@ app.post('/api/clubregister', async (req, res) => {
     });
   }
 });
+// ============================================
+// CLERK AUTH ROUTES
+// ============================================
+app.use('/api/auth', authRoutes);
+
 // ============================================
 // HEALTH CHECK & TEST ENDPOINTS
 // ============================================

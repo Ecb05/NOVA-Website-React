@@ -1,0 +1,41 @@
+.auth-nav-item {
+  display: flex;
+  align-items: center;
+  margin-left: 40px;
+}
+
+.auth-nav-item .sign-in-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.auth-nav-item .sign-in-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 200, 150, 0.6);
+}
+
+.user-button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .auth-nav-item {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+  
+  .auth-nav-item .sign-in-btn {
+    width: 100%;
+    max-width: 360px;
+  }
+}

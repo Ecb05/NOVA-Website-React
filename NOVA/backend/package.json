@@ -11,8 +11,10 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^4.13.23",
     "@notionhq/client": "^5.1.0",
     "@sendgrid/mail": "^8.1.6",
+    "@supabase/supabase-js": "^2.106.2",
     "autocannon": "^8.0.0",
     "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.0",

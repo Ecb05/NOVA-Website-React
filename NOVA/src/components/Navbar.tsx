@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { UserButton, SignedIn, SignedOut, SignInButton } from '@clerk/clerk-react'
+import './NavbarAuth.css'
 
 const Navbar: React.FC = (): React.JSX.Element => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -105,6 +107,40 @@ const Navbar: React.FC = (): React.JSX.Element => {
             >
               Join us
             </Link>
+          </li>
+          <li className="auth-nav-item">
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className="sign-in-btn" onClick={closeMenu}>
+                  Sign In
+                </button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <div className="user-button-wrapper">
+                <UserButton
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: {
+                        width: '36px',
+                        height: '36px',
+                        border: '2px solid rgba(255,255,255,0.2)',
+                        borderRadius: '50%',
+                      },
+                      userButtonPopoverCard: {
+                        backgroundColor: '#1a1b3a',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '12px',
+                      },
+                      userButtonPopoverActionItem: {
+                        color: '#ffffff',
+                      },
+                    },
+                  }}
+                  afterSignOutUrl="/"
+                />
+              </div>
+            </SignedIn>
           </li>
         </ul>
       </div>

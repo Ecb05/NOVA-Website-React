@@ -1,13 +1,6 @@
 import React from 'react'
 
 const Footer: React.FC = (): React.JSX.Element => {
-  const scrollToSection = (sectionId: string): void => {
-    const element = document.getElementById(sectionId)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-    }
-  }
-
   return (
     <footer>
       <div className="footer-container">

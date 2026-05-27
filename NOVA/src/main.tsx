@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { ClerkProvider } from '@clerk/clerk-react'
 import './index.css'
 import App from './App'
 
@@ -16,6 +17,17 @@ import 'aos/dist/aos.css'
 import AOS from 'aos'
 AOS.init()
 
+// Clerk publishable key
+const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+
+if (!CLERK_PUBLISHABLE_KEY) {
+  throw new Error(
+    'Missing VITE_CLERK_PUBLISHABLE_KEY environment variable.\n' +
+    'Create a .env file in the project root with:\n' +
+    'VITE_CLERK_PUBLISHABLE_KEY=your_key_here'
+  )
+}
+
 const rootElement = document.getElementById('root')
 if (!rootElement) {
   throw new Error('Failed to find the root element')
@@ -23,6 +35,8 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+      <App />
+    </ClerkProvider>
   </StrictMode>,
 )
