@@ -1,5 +1,6 @@
 # NOVA Club Platform — Progress Log
 
+
 ## ✅ Session 1 Completed
 - Set up Supabase project + migration (`001_schema.sql`) — tables: `users`, `events`, `event_registrations`, `submissions`, `announcements` with RLS
 - Installed packages: `@clerk/clerk-react`, `@supabase/supabase-js` (frontend), `@clerk/clerk-sdk-node`, `@supabase/supabase-js` (backend)
@@ -45,6 +46,10 @@
 
 ## 🔜 Next session
 - Create Dashboard page with leaderboard, events overview, and user profile
+  - for the dashboard, implement a sidebar with user profile options and links to customize thier details .in this side bar protected routes of the activites and thier pages will be there. 
+  - we also need to develop the user activity feed thats the default page once the user logs in. Think notion.
 - Build event registration flow using Supabase
 - Migrate existing registration/submission endpoints from Notion to Supabase
 - Add Clerk role-based admin panel
+
+

@@ -14,13 +14,19 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    /* JavaScript Support (enables gradual migration of existing JS/JSX files) */
+    /* JavaScript Support */
     "allowJs": true,
     "checkJs": false,
 

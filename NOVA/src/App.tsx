@@ -13,26 +13,10 @@ import Sprints from './pages/Sprints'
 import IdeasprintPage from './pages/IdeasprintPage'
 import Events from './pages/Events'
 import Announcements from './pages/Announcements'
+import Dashboard from './pages/Dashboard'
 import { SignInPage, SignUpPage } from './pages/SignIn'
 
 const Rules: React.FC = (): React.JSX.Element => <div>Rules Page</div>
-
-// Placeholder dashboard page
-const Dashboard: React.FC = (): React.JSX.Element => (
-  <div
-    style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: '#fff',
-      fontSize: '2rem',
-      background: 'linear-gradient(135deg, #05070a, #0b2f2a, #1a1b3a)',
-    }}
-  >
-    Dashboard (coming soon)
-  </div>
-)
 
 // Helper component to access location and conditionally render particles
 const AppContent: React.FC = (): React.JSX.Element => {
@@ -41,13 +25,14 @@ const AppContent: React.FC = (): React.JSX.Element => {
   const location = useLocation()
   const isIdeaSprint = location.pathname === '/ideasprint'
   const isAuthPage = location.pathname === '/sign-in' || location.pathname === '/sign-up'
+  const isDashboard = location.pathname === '/dashboard'
 
   return (
     <div className="App">
       <Navbar />
       
-      {/* Conditionally hide global particles on IdeaSprint and auth pages */}
-      {!isIdeaSprint && !isAuthPage && <ParticlesBackground />}
+      {/* Conditionally hide global particles on IdeaSprint, auth, and dashboard pages */}
+      {!isIdeaSprint && !isAuthPage && !isDashboard && <ParticlesBackground />}
 
       <main>
         <Routes>
@@ -77,7 +62,10 @@ const AppContent: React.FC = (): React.JSX.Element => {
         </Routes>
       </main>
 
-      <Footer />
+      {/* Offset footer on dashboard so it clears the fixed sidebar */}
+      <div className={isDashboard ? 'md:ml-[260px] transition-all duration-300' : ''}>
+        <Footer />
+      </div>
     </div>
   )
 }

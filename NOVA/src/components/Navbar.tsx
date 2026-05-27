@@ -108,6 +108,17 @@ const Navbar: React.FC = (): React.JSX.Element => {
               Join us
             </Link>
           </li>
+          <SignedIn>
+            <li>
+              <Link
+                to="/dashboard"
+                className={isActiveLink('/dashboard') ? 'active' : ''}
+                onClick={closeMenu}
+              >
+                Dashboard
+              </Link>
+            </li>
+          </SignedIn>
           <li className="auth-nav-item">
             <SignedOut>
               <SignInButton mode="modal">
