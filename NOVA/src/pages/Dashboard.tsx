@@ -5,9 +5,7 @@ import {
   GitBranch,
   Star,
   Medal,
-  Trophy,
   ArrowRight,
-  Sparkles,
   TrendingUp,
   Clock,
   User,
@@ -17,6 +15,8 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import DashboardSidebar from '../components/dashboard/DashboardSidebar'
+import CarouselSlider from '../components/dashboard/CarouselSlider'
+import { buildAnnouncementSlides, buildActivitySlides } from '@/configs/dashboardCarouselConfig'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
@@ -135,47 +135,32 @@ const Dashboard: React.FC = () => {
 
   // --- OVERVIEW SECTION ---
 
-  const GreetingCard = () => (
-    <Card className="relative overflow-hidden bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 border-0 shadow-lg mb-7">
-      {/* Decorative circles */}
-      <div className="absolute -top-10 -right-10 size-40 rounded-full bg-white/10 pointer-events-none" />
-      <div className="absolute -bottom-8 -left-8 size-28 rounded-full bg-white/5 pointer-events-none" />
-      <CardContent className="p-7 md:p-9 relative">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <Avatar className="size-12 ring-2 ring-white/40 shadow-md">
-                {profileImage ? (
-                  <AvatarImage src={profileImage} alt={displayName} />
-                ) : (
-                  <AvatarFallback className="bg-emerald-200 text-emerald-800 text-sm font-bold">
-                    {initials}
-                  </AvatarFallback>
-                )}
-              </Avatar>
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold text-white m-0">
-                  {getGreeting()}, {displayName}!
-                </h2>
-                <p className="text-sm text-emerald-100/80 m-0 mt-0.5">
-                  Welcome to your dashboard
-                </p>
-              </div>
-            </div>
-            <p className="text-sm text-white/80 m-0 mt-3 max-w-lg leading-relaxed">
-              Manage your profile, track your events, check your submissions,
-              and stay connected with the NOVA community.
-            </p>
-            <div className="inline-flex items-center gap-2 mt-4 px-3.5 py-2 rounded-lg bg-white/15 border border-white/20 text-white text-xs font-semibold backdrop-blur-sm">
-              <Trophy className="size-4" />
-              <span>{userPoints} points earned</span>
-            </div>
-          </div>
-          <Sparkles className="size-7 text-white/30 shrink-0 hidden md:block" />
-        </div>
-      </CardContent>
-    </Card>
+  // Notion-style greeting header — clean typography, no card
+  const GreetingHeader = () => (
+    <div className="mb-8">
+      <div className="flex items-center gap-3 mb-1">
+        <Avatar className="size-10 ring-1 ring-zinc-200 dark:ring-zinc-700">
+          {profileImage ? (
+            <AvatarImage src={profileImage} alt={displayName} />
+          ) : (
+            <AvatarFallback className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 text-sm font-semibold">
+              {initials}
+            </AvatarFallback>
+          )}
+        </Avatar>
+        <h1 className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-zinc-100 m-0 tracking-tight">
+          Hello, {displayName}!
+        </h1>
+      </div>
+      <p className="text-sm text-zinc-400 dark:text-zinc-500 m-0 ml-[52px]">
+        {getGreeting()}. Here's what's happening with NOVA.
+      </p>
+    </div>
   )
+
+  // Build carousel slides from the typed config
+  const announcementSlides = buildAnnouncementSlides()
+  const activitySlides = buildActivitySlides({ points: userPoints })
 
   interface StatCardProps {
     icon: React.ReactNode
@@ -260,41 +245,73 @@ const Dashboard: React.FC = () => {
 
   const OverviewSection = () => (
     <div className="animate-[dashFadeIn_0.35s_ease]">
-      <GreetingCard />
+      <GreetingHeader />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
-        <StatCard
-          icon={<CalendarCheck className="size-4" />}
-          value={0}
-          label="Registered Events"
-          trend="+0%"
-          trendUp={false}
-          color="emerald"
-        />
-        <StatCard
-          icon={<GitBranch className="size-4" />}
-          value={0}
-          label="Submissions"
-          trend="—"
-          color="indigo"
-        />
-        <StatCard
-          icon={<Star className="size-4" />}
-          value={userPoints}
-          label="Total Points"
-          trend="+0"
-          trendUp={false}
-          color="amber"
-        />
-        <StatCard
-          icon={<Medal className="size-4" />}
-          value="—"
-          label="Leaderboard Rank"
-          color="pink"
+      {/* Announcements — one at a time, full width */}
+      <div className="mb-6">
+        <h2 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 m-0 mb-3 tracking-tight">
+          Announcements
+        </h2>
+        <CarouselSlider
+          items={announcementSlides}
+          autoPlay
+          interval={6000}
+          id="dashboard-announcements"
+          viewMode="single"
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      {/* Activity cards — multiple visible, free-scroll */}
+      <div className="mb-6">
+        <h2 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 m-0 mb-3 tracking-tight">
+          Activity
+        </h2>
+        <CarouselSlider
+          items={activitySlides}
+          viewMode="multi"
+          minItemWidth={280}
+          id="dashboard-activity"
+        />
+      </div>
+
+      <div className="mb-6">
+        <h2 className="text-sm font-semibold text-zinc-800 dark:text-zinc-200 m-0 mb-3 tracking-tight">
+          Overview
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <StatCard
+            icon={<CalendarCheck className="size-4" />}
+            value={0}
+            label="Registered Events"
+            trend="+0%"
+            trendUp={false}
+            color="emerald"
+          />
+          <StatCard
+            icon={<GitBranch className="size-4" />}
+            value={0}
+            label="Submissions"
+            trend="—"
+            color="indigo"
+          />
+          <StatCard
+            icon={<Star className="size-4" />}
+            value={userPoints}
+            label="Total Points"
+            trend="+0"
+            trendUp={false}
+            color="amber"
+          />
+          <StatCard
+            icon={<Medal className="size-4" />}
+            value="—"
+            label="Leaderboard Rank"
+            color="pink"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <QuickLinks />
 
         <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
