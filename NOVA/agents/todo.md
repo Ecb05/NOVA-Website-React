@@ -44,10 +44,11 @@
 - Verify the backend server starts successfully (try `node backend/server.js` now)
 - Test the sign-in → sync flow end-to-end
 
-## 🔜 Next session
+## 🔜 SESSION_5
 - Create Dashboard page with leaderboard, events overview, and user profile
   - for the dashboard, implement a sidebar with user profile options and links to customize thier details .in this side bar protected routes of the activites and thier pages will be there. 
-  - we also need to develop the user activity feed thats the default page once the user logs in. Think notion.
+  ## TO implement this SESSION
+  - we also need to develop the user activity feed thats the default page once the user logs in. Think notion.For this feature i want horizontal scrollable sections that render components in a single slider similar to notion's default page. 
 - Build event registration flow using Supabase
 - Migrate existing registration/submission endpoints from Notion to Supabase
 - Add Clerk role-based admin panel
